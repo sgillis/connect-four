@@ -10,6 +10,9 @@
 <div class="container">
     <div class="well">
         <h1>Connect four</h1>
+        <button type="button" data-ng-click="game.reset()" class="btn">
+            Reset
+        </button>
         {{ game.gameMessage }}
         <div class="container">
             <div class="row" ng-repeat="y in game.range">
