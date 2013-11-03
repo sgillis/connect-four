@@ -1,3 +1,16 @@
+function availableSpot(x, y, pieces){
+    var all_pieces = pieces[0].concat(pieces[1]);
+    lowest = 6;
+    for(piece in all_pieces){
+        if(all_pieces[piece][0] === x){
+            if(all_pieces[piece][1] <= lowest){
+                lowest = all_pieces[piece][1] - 1;
+            }
+        }
+    }
+    return [x, lowest];
+}
+
 // From:
 // http://codereview.stackexchange.com/questions/11070/snippet-of-custom-array-indexof-that-supports-nested-arrays
 function indexOfArr(arr1, fnd) {

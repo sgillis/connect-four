@@ -6,7 +6,7 @@ connectFour.factory('game', function(){
     return new Game();
 });
 
-connectFour.controller('GameCtrl', function GameCtrl($scope, game) {
+connectFour.controller('GameCtrl', function GameCtrl($scope, game){
     $scope.game = game;
 });
 
@@ -17,7 +17,7 @@ function Game(){
     
     this.gameMessage = "Welcome to 'Connectfour'!";
 
-    this.containsPiece = function(p, x, y) {
+    this.containsPiece = function(p, x, y){
         if(indexOfArr(this.pieces[p], [x, y]) > -1){
             return true;
         }
@@ -25,7 +25,10 @@ function Game(){
     };
     
     this.makeMove = function(x, y){
-        this.pieces[this.active_player].push([x, y]);
-        this.active_player = (this.active_player + 1) % 2;
+        var spot = availableSpot(x, y, this.pieces);
+        if(spot[1] > -1){
+            this.pieces[this.active_player].push(spot);
+            this.active_player = (this.active_player + 1) % 2;
+        }
     };
 }
