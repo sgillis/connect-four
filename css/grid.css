@@ -1,0 +1,15 @@
+.col-md-3 {
+    height: 80px;
+    width: 80px;
+    padding: 0;
+    background-color: rgba(86,61,123,.3);
+    margin: 1px;
+}
+
+.p1 { 
+    background: #65D848;
+}
+
+.p2 {
+    background: #E75858;
+}
