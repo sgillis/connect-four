@@ -1,4 +1,6 @@
 function availableSpot(x, y, pieces){
+    // Return the lowest available position for this column
+    // Keep in mind that 6 is the lowest position and 0 the highest
     var all_pieces = pieces[0].concat(pieces[1]);
     lowest = 6;
     for(piece in all_pieces){
@@ -11,6 +13,53 @@ function availableSpot(x, y, pieces){
     return [x, lowest];
 }
 
+function fourConnected(pieces){
+    // Check if there are four connected pieces
+    for(piece in pieces){
+        // Check to the right
+        var x = pieces[piece][0];
+        var y = pieces[piece][1];
+        for(var i=1; i<4; i++){
+            if(indexOfArr(pieces, [x+i, y]) == -1){
+                break;
+            }
+            if(i == 3){
+                // If we got here, we have a horizontal connect four
+                return true;
+            }
+        }
+        // Check down
+        for(var i=1; i<4; i++){
+            if(indexOfArr(pieces, [x, y+i]) == -1){
+                break;
+            }
+            if(i == 3){
+                return true;
+            }
+        }
+        // Check diagonally
+        for(var i=1; i<4; i++){
+            if(indexOfArr(pieces, [x+i, y+i]) == -1){
+                break;
+            }
+            if(i == 3){
+                return true;
+            }
+        }
+        // And the other diagonal
+        for(var i=1; i<4; i++){
+            if(indexOfArr(pieces, [x-i, y+i]) == -1){
+                break;
+            }
+            if(i == 3){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// Two functions for getting the index of a subarray
 // From:
 // http://codereview.stackexchange.com/questions/11070/snippet-of-custom-array-indexof-that-supports-nested-arrays
 function indexOfArr(arr1, fnd) {

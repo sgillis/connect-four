@@ -28,7 +28,18 @@ function Game(){
         var spot = availableSpot(x, y, this.pieces);
         if(spot[1] > -1){
             this.pieces[this.active_player].push(spot);
-            this.active_player = (this.active_player + 1) % 2;
+            var won = fourConnected(this.pieces[this.active_player]);
+            if(won){
+                this.gameMessage = "P" + (this.active_player + 1) + " won!"
+            } else {
+                this.active_player = (this.active_player + 1) % 2;
+                this.gameMessage = "P" + (this.active_player + 1) + " to move"
+            }
         }
     };
+
+    this.reset = function(){
+        this.pieces = [[], []];
+        this.active_player = 0;
+    }
 }
