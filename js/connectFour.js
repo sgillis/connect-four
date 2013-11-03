@@ -12,16 +12,20 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, game) {
 
 function Game(){
     this.range = [0, 1, 2, 3, 4, 5, 6];
-    this.pieces = [];
+    this.pieces = [[], []];
     this.active_player = 0;
     
     this.gameMessage = "Welcome to 'Connectfour'!";
 
     this.containsPiece = function(p, x, y) {
-
+        if(indexOfArr(this.pieces[p], [x, y]) > -1){
+            return true;
+        }
+        return false;
     };
     
     this.makeMove = function(x, y){
-
+        this.pieces[this.active_player].push([x, y]);
+        this.active_player = (this.active_player + 1) % 2;
     };
 }

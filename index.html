@@ -11,11 +11,13 @@
     <div class="well">
         <h1>Connect four</h1>
         {{ game.gameMessage }}
-        <div class="row" ng-repeat="y in game.range">
-            <div class="col-md-3" ng-repeat="x in game.range"
-                ng-click="game.makeMove(x, y)"
-                ng-class="{p1: game.containsPiece(0, x, y),
-                           p2: game.containsPiece(1, x, y)}">
+        <div class="container">
+            <div class="row" ng-repeat="y in game.range">
+                <div class="col-md-3" ng-repeat="x in game.range"
+                    ng-click="game.makeMove(x, y)"
+                    ng-class="{p1: game.containsPiece(0, x, y),
+                               p2: game.containsPiece(1, x, y)}">
+                </div>
             </div>
         </div>
     </div>
@@ -24,5 +26,6 @@
     src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.3/angular.js">
 </script>
 <script type="text/javascript" src="js/connectFour.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
 </body>
 </html>
