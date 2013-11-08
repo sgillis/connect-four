@@ -1,0 +1,9 @@
+{
+    "name": "connect-four",
+    "description": "Connect four",
+    "version": "0.0.0",
+    "private": true,
+    "dependencies": {
+        "express": "3.x"
+    }
+}
