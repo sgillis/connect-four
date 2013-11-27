@@ -3,39 +3,38 @@
 var connectFour = angular.module('connectFour', ['socket-io']);
 
 connectFour.controller('GameCtrl', function GameCtrl($scope){
-    $scope.game = new Game();
-});
+    $scope.game = new Game($scope);
 
-function Game(){
-    this.range = [0, 1, 2, 3, 4, 5, 6];
-    this.pieces = [[], []];
-    this.active_player = 0;
-    
-    this.gameMessage = "Welcome to 'Connectfour'!";
+    $scope.makeMove = function(game, x, y){
+        var spot = availableSpot(x, y, game.pieces);
+        if(spot[1] > -1){
+            game.pieces[game.active_player].push(spot);
+            var won = fourConnected(game.pieces[game.active_player]);
+            if(won){
+                game.gameMessage = "P" + (game.active_player + 1) + " won!"
+            } else {
+                game.active_player = (game.active_player + 1) % 2;
+                game.gameMessage = "P" + (game.active_player + 1) + " to move"
+            }
+        }
+    }
 
-    this.containsPiece = function(p, x, y){
-        if(indexOfArr(this.pieces[p], [x, y]) > -1){
+    $scope.containsPiece = function(game, p, x, y){
+        if(indexOfArr(game.pieces[p], [x, y]) > -1){
             return true;
         }
         return false;
-    };
-    
-    this.makeMove = function(x, y){
-        var spot = availableSpot(x, y, this.pieces);
-        if(spot[1] > -1){
-            this.pieces[this.active_player].push(spot);
-            var won = fourConnected(this.pieces[this.active_player]);
-            if(won){
-                this.gameMessage = "P" + (this.active_player + 1) + " won!"
-            } else {
-                this.active_player = (this.active_player + 1) % 2;
-                this.gameMessage = "P" + (this.active_player + 1) + " to move"
-            }
-        }
-    };
-
-    this.reset = function(){
-        this.pieces = [[], []];
-        this.active_player = 0;
     }
+
+    $scope.reset = function(game){
+        game.pieces = [[], []];
+        game.active_player = 0;
+    }
+});
+
+function Game($scope){
+    this.range = [0, 1, 2, 3, 4, 5, 6];
+    this.pieces = [[], []];
+    this.active_player = 0;
+    this.gameMessage = "Welcome to 'Connectfour'!";
 }

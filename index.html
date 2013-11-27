@@ -10,16 +10,16 @@
 <div class="container">
     <div class="well">
         <h1>Connect four</h1>
-        <button type="button" data-ng-click="game.reset()" class="btn">
+        <button type="button" data-ng-click="reset(game)" class="btn">
             Reset
         </button>
         {{ game.gameMessage }}
         <div class="container">
             <div class="row" ng-repeat="y in game.range">
                 <div class="col-md-3" ng-repeat="x in game.range"
-                    ng-click="game.makeMove(x, y)"
-                    ng-class="{p1: game.containsPiece(0, x, y),
-                               p2: game.containsPiece(1, x, y)}">
+                    ng-click="makeMove(game, x, y)"
+                    ng-class="{p1: containsPiece(game, 0, x, y),
+                               p2: containsPiece(game, 1, x, y)}">
                 </div>
             </div>
         </div>
