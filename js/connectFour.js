@@ -1,6 +1,6 @@
 'use strict';
 
-var connectFour = angular.module('connectFour', []);
+var connectFour = angular.module('connectFour', ['socket-io']);
 
 connectFour.controller('GameCtrl', function GameCtrl($scope){
     $scope.game = new Game();
