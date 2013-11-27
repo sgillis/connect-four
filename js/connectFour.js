@@ -2,12 +2,8 @@
 
 var connectFour = angular.module('connectFour', []);
 
-connectFour.factory('game', function(){
-    return new Game();
-});
-
-connectFour.controller('GameCtrl', function GameCtrl($scope, game){
-    $scope.game = game;
+connectFour.controller('GameCtrl', function GameCtrl($scope){
+    $scope.game = new Game();
 });
 
 function Game(){
