@@ -16,3 +16,9 @@ app.get(/^(.+)$/, function(req, res){
 server.listen(3000, function(){
     console.log('Listening on port 3000');
 });
+
+io.sockets.on('connection', function(socket){
+    socket.on('move', function(data, fn){
+        console.log(data);
+    });
+});

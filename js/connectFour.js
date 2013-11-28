@@ -3,7 +3,7 @@
 var connectFour = angular.module('connectFour', []);
 
 connectFour.factory('socket', function($rootScope) {
-    var socket = io.connect();
+    var socket = io.connect('http://localhost:3000');
     return {
         on: function(eventName, callback) {
             socket.on(eventName, function() {
@@ -28,6 +28,7 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, socket){
 
     $scope.makeMove = function(game, x, y){
         var spot = availableSpot(x, y, game.pieces);
+        socket.emit('move', {move: 'move_made'}, function(){});
         if(spot[1] > -1){
             game.pieces[game.active_player].push(spot);
             var won = fourConnected(game.pieces[game.active_player]);
