@@ -17,7 +17,7 @@
         <div class="container">
             <div class="row" ng-repeat="y in game.range">
                 <div class="col-md-3" ng-repeat="x in game.range"
-                    ng-click="makeMove(game, x, y)"
+                    ng-click="move(game, x, y)"
                     ng-class="{p1: containsPiece(game, 0, x, y),
                                p2: containsPiece(game, 1, x, y)}">
                 </div>
