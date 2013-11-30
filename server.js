@@ -24,14 +24,14 @@ var gameStates = (function(){
             }
         }
         // No free game found, create one
-        var new_game = {name: games.length, players: ['0']};
+        var new_game = {name: games.length, players: [0]};
         games.push(new_game);
-        return {name: '0', game: new_game}
+        return {name: 0, game: new_game}
     };
 
     // Decide if a given game still has a free player slot
     var gameHasSlotFree = function(game){
-        if( (game.players.indexOf('0') == -1) || (game.players.indexOf('1') == -1) ){
+        if( (game.players.indexOf(0) == -1) || (game.players.indexOf(1) == -1) ){
             return true;
         } else {
             return false;
@@ -40,12 +40,12 @@ var gameStates = (function(){
 
     // Occupy a place in a game. This assumes there is a slot available
     var occupyGame = function(game){
-        if(game.players.indexOf('0') == -1){
-            game.players.push('0');
-            return '0';
+        if(game.players.indexOf(0) == -1){
+            game.players.push(0);
+            return 0;
         } else {
-            game.players.push('1');
-            return '1';
+            game.players.push(1);
+            return 1;
         }
     }
 

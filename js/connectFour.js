@@ -2,24 +2,30 @@
 
 var connectFour = angular.module('connectFour', ['socket-io']);
 
-connectFour.controller('GameCtrl', function GameCtrl($scope, socket){
+connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
     $scope.game = new Game();
 
     // This function is called to submit a move, and decides if it was a valid
     // move
     $scope.move = function(game, x, y){
-        var spot = availableSpot(x, y, game.pieces);
-        if(spot[1] > -1){
-            $scope.makeMove(game, spot);
+        if($scope.name == game.active_player){
+            var spot = availableSpot(x, y, game.pieces);
+            if(spot[1] > -1){
+                // Notify server about move
+                socket.emit('move', {
+                    move: spot,
+                    game_name: $scope.game_name,
+                    name: $scope.name
+                });
+
+                // Make move locally
+                $scope.makeMove(game, spot);
+            }
         }
     }
 
     // This function is called when a valid move was submitted
     $scope.makeMove = function(game, spot){
-        // Notify server about move
-        socket.emit('move', {move: spot});
-
-        // Make move locally
         game.pieces[game.active_player].push(spot);
         var won = fourConnected(game.pieces[game.active_player]);
         if(won){
@@ -46,6 +52,15 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, socket){
     socket.on('init', function(data){
         $scope.name = data.name;
         $scope.game_name = data.game_name;
+    });
+
+    socket.on('move', function(data){
+        $log.info(data);
+        if($scope.game_name == data.game_name){
+            if(data.name == $scope.game.active_player){
+                $scope.makeMove($scope.game, data.move);
+            }
+        }
     });
 });
 
