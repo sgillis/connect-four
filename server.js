@@ -29,6 +29,10 @@ var gameStates = (function(){
         return {name: 0, game: new_game}
     };
 
+    var getGamePlayers = function(gameIndex){
+        return games[gameIndex].players
+    }
+
     // Decide if a given game still has a free player slot
     var gameHasSlotFree = function(game){
         if( (game.players.indexOf(0) == -1) || (game.players.indexOf(1) == -1) ){
@@ -51,14 +55,13 @@ var gameStates = (function(){
 
     // Called when a player leaves a game
     var leaveGame = function(game, player){
-        console.log(games);
-        games[game].players.splice(games[game].players.indexOf(player),1)
-        console.log(games);
+        games[game].players.splice(games[game].players.indexOf(player),1);
     }
 
     return {
         getNames: getNames,
-        leaveGame: leaveGame
+        leaveGame: leaveGame,
+        getGamePlayers: getGamePlayers
     };
 }());
 
@@ -68,24 +71,26 @@ io.sockets.on('connection', function(socket){
     socket.emit('init', {
         name: names.name,
         game_name: names.game.name,
+        players: names.game.players
     });
 
     socket.broadcast.emit('user:join', {
         name: names.name,
-        game_name: names.game.name
+        game_name: names.game.name,
+        players: gameStates.getGamePlayers(names.game.name)
     });
 
     socket.on('move', function(data){
-        console.log(data);
         socket.broadcast.emit('move', data);
     });
 
     socket.on('disconnect', function(){
+        gameStates.leaveGame(names.game.name, names.name);
         socket.broadcast.emit('user:left', {
             name: names.name,
-            game_name: names.game.name
+            game_name: names.game.name,
+            players: gameStates.getGamePlayers(names.game.name)
         });
-        gameStates.leaveGame(names.game.name, names.name);
     });
 });
 

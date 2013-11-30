@@ -52,14 +52,29 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
     socket.on('init', function(data){
         $scope.name = data.name;
         $scope.game_name = data.game_name;
+        $scope.players = data.players;
     });
 
     socket.on('move', function(data){
-        $log.info(data);
         if($scope.game_name == data.game_name){
             if(data.name == $scope.game.active_player){
                 $scope.makeMove($scope.game, data.move);
             }
+        }
+    });
+
+    socket.on('user:left', function(data){
+        if(data.game_name == $scope.game_name){
+            $scope.game.gameMessage = 'Opponent left, please wait for a new opponent.';
+        }
+        $scope.players = data.players;
+    });
+
+    socket.on('user:join', function(data){
+        if(data.game_name == $scope.game_name){
+            $scope.players = data.players;
+            $scope.reset($scope.game);
+            $scope.game.gameMessage = 'New opponent, game on!';
         }
     });
 });
