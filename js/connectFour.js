@@ -16,6 +16,10 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, socket){
 
     // This function is called when a valid move was submitted
     $scope.makeMove = function(game, spot){
+        // Notify server about move
+        socket.emit('move', {move: spot});
+
+        // Make move locally
         game.pieces[game.active_player].push(spot);
         var won = fourConnected(game.pieces[game.active_player]);
         if(won){
@@ -37,6 +41,12 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, socket){
         game.pieces = [[], []];
         game.active_player = 0;
     }
+
+    // Socket functions
+    socket.on('init', function(data){
+        $scope.name = data.name;
+        $scope.game_name = data.game_name;
+    });
 });
 
 function Game(){
