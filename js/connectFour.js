@@ -48,6 +48,12 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
         game.active_player = 0;
     }
 
+    $scope.create_bot = function(){
+        if($scope.players.length < 2){
+            $scope.bot = new Bot($scope, $log, socket);
+        }
+    }
+
     // Socket functions
     socket.on('init', function(data){
         $scope.name = data.name;
@@ -84,4 +90,15 @@ function Game(){
     this.pieces = [[], []];
     this.active_player = 0;
     this.gameMessage = "Welcome to 'Connectfour'!";
+}
+
+function Bot($scope, $log, socket){
+    // Let the server know a bot-overlord is born
+    socket.emit('bot:joined', {
+        game_name: $scope.game_name,
+    });
+
+    this.move = function(){
+        $log.error('have to make move');
+    }
 }
