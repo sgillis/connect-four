@@ -11,12 +11,15 @@
     <div class="well">
         <h1>Connect four</h1>
         <div>
-            You are P{{ name + 1 }} in game {{ game_name}}
+            You are P{{ name + 1 }} in game {{ game_name}}<br />
+            {{ game.gameMessage }}
         </div>
         <button type="button" data-ng-click="reset(game)" class="btn">
             Reset
         </button>
-        {{ game.gameMessage }}
+        <button type="button" data-ng-click="create_bot()" class="btn">
+            Play against a bot
+        </button>
         <div class="container">
             <div class="row" ng-repeat="y in game.range">
                 <div class="col-xs-1" ng-repeat="x in game.range"
