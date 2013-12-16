@@ -8,7 +8,8 @@ Todo
 ----
 
 Implement bot:
-- [x] Make bot on user request
-- [ ] Notify server that a bot has joined
-- [ ] Make bot be able to move
-- [ ] Make bot smart
+
+ - Make bot on user request
+ - Notify server that a bot has joined
+ - Make bot be able to move
+ - Make bot smart
