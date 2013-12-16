@@ -53,6 +53,10 @@ var gameStates = (function(){
         }
     }
 
+    var addBot = function(game_name){
+        games[game_name].players.push(1);
+    }
+
     // Called when a player leaves a game
     var leaveGame = function(game, player){
         games[game].players.splice(games[game].players.indexOf(player),1);
@@ -61,7 +65,8 @@ var gameStates = (function(){
     return {
         getNames: getNames,
         leaveGame: leaveGame,
-        getGamePlayers: getGamePlayers
+        getGamePlayers: getGamePlayers,
+        addBot: addBot
     };
 }());
 
@@ -82,6 +87,10 @@ io.sockets.on('connection', function(socket){
 
     socket.on('move', function(data){
         socket.broadcast.emit('move', data);
+    });
+
+    socket.on('bot:joined', function(data){
+        gameStates.addBot(data.game_name);
     });
 
     socket.on('disconnect', function(){
