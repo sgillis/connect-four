@@ -17,7 +17,7 @@
         <button type="button" data-ng-click="reset(game)" class="btn">
             Reset
         </button>
-        <button type="button" data-ng-click="create_bot()" class="btn">
+        <button type="button" data-ng-click="create_bot()" data-ng-hide="players.length > 1" class="btn">
             Play against a bot
         </button>
         <div class="container">

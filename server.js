@@ -24,7 +24,7 @@ var gameStates = (function(){
             }
         }
         // No free game found, create one
-        var new_game = {name: games.length, players: [0]};
+        var new_game = {name: games.length, players: [0], bot: 0};
         games.push(new_game);
         return {name: 0, game: new_game}
     };
@@ -54,12 +54,17 @@ var gameStates = (function(){
     }
 
     var addBot = function(game_name){
-        games[game_name].players.push(1);
+        occupyGame(games[game_name]);
+        games[game_name].bot = 1;
     }
 
     // Called when a player leaves a game
     var leaveGame = function(game, player){
         games[game].players.splice(games[game].players.indexOf(player),1);
+        if(games[game].bot == 1){
+            games[game].players = [];
+            games[game].bot = 0;
+        }
     }
 
     return {

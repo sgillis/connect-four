@@ -51,6 +51,7 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
     $scope.create_bot = function(){
         if($scope.players.length < 2){
             $scope.bot = new Bot($scope, $log, socket);
+            $scope.players.push( ($scope.name + 1) % 2 );
         }
     }
 
