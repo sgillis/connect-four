@@ -12,6 +12,7 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
             var spot = availableSpot(x, y, game.pieces);
             if(spot[1] > -1){
                 // Notify server about move
+                // TODO: don't notify server when playing against bot
                 socket.emit('move', {
                     move: spot,
                     game_name: $scope.game_name,
@@ -33,6 +34,9 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
         } else {
             game.active_player = (game.active_player + 1) % 2;
             game.gameMessage = "P" + (game.active_player + 1) + " to move"
+        }
+        if($scope.bot && game.active_player != $scope.name && !won){
+            $scope.bot.move();
         }
     }
 
@@ -100,6 +104,15 @@ function Bot($scope, $log, socket){
     });
 
     this.move = function(){
-        $log.error('have to make move');
+        $log.info('bot making move');
+        var made_move = false;
+        while(made_move == false){
+            var spot = availableSpot(Math.floor(Math.random() * 7), 0, $scope.game.pieces);
+            if(spot[1] > -1){
+                // Make move locally
+                $scope.makeMove($scope.game, spot);
+                made_move = true;
+            }
+        }
     }
 }
