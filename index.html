@@ -10,14 +10,20 @@
 <div class="container">
     <div class="well">
         <h1>Connect four</h1>
+        <div>
+            You are P{{ name + 1 }} in game {{ game_name}}<br />
+            {{ game.gameMessage }}
+        </div>
         <button type="button" data-ng-click="reset(game)" class="btn">
             Reset
         </button>
-        {{ game.gameMessage }}
+        <button type="button" data-ng-click="create_bot()" data-ng-hide="players.length > 1" class="btn">
+            Play against a bot
+        </button>
         <div class="container">
             <div class="row" ng-repeat="y in game.range">
-                <div class="col-md-3" ng-repeat="x in game.range"
-                    ng-click="makeMove(game, x, y)"
+                <div class="col-xs-1" ng-repeat="x in game.range"
+                    ng-click="move(game, x, y)"
                     ng-class="{p1: containsPiece(game, 0, x, y),
                                p2: containsPiece(game, 1, x, y)}">
                 </div>
@@ -28,8 +34,8 @@
 <script type="text/javascript"
     src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.3/angular.js">
 </script>
-<script type="text/javascript" src="http://localhost:3000/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="js/services.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="js/factories.js"></script>
 <script type="text/javascript" src="js/connectFour.js"></script>
 <script type="text/javascript" src="js/utils.js"></script>
 </body>
