@@ -67,6 +67,21 @@ function Neuron(){
     }
 }
 
+function Sigmoid(x, m, s){
+  // Calculates the sigmoid function
+  //
+  //   sigmoid(x, m, s) =
+  //     exp( -(x-m)^2 / (2s^2) ) - 1   if x<m
+  //     1 - exp( -(x-m)^2 / (2s^2) )   otherwise
+  //
+  exp = Math.exp( -Math.pow(x-m,2) / (2*Math.pow(s,2)) );
+  if(x<m){
+    return exp - 1;
+  } else {
+    return 1 - exp;
+  }
+}
+
 function Genome(){
     // Contains the weights for a neural network
     this.weights = [];
