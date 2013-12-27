@@ -1,3 +1,7 @@
+module.exports = {
+    construct: construct
+}
+
 function availableSpot(x, y, pieces){
     // Return the lowest available position for this column
     // Keep in mind that 6 is the lowest position and 0 the highest
@@ -104,4 +108,14 @@ function elementComparer(fnd1, fnd2) {
         }
     }
     return true;
+}
+
+// Construct function for calling any constructor with an array of arguments
+// From:
+function construct(constructor, args) {
+    function F() {
+        return constructor.apply(this, args);
+    }
+    F.prototype = constructor.prototype;
+    return new F();
 }
