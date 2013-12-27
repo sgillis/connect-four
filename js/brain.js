@@ -91,6 +91,7 @@ function Neuron(weights, mu_s, sigma_s, mu_d, sigma_d){
     this.mu_d = mu_d;
     this.sigma_d = sigma_d;
 
+    // TODO fix mu_d and sigma_d functionality
     this.process_inputs = function(inputs){
         var output = 0;
         for(var i=0; i<inputs.length; i++){
