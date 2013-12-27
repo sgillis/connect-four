@@ -1,3 +1,5 @@
+var utils = require('./utils.js')
+
 module.exports = {
     Brain: Brain,
     NeuronLayer: NeuronLayer,
@@ -44,15 +46,31 @@ function Brain(){
     // output signal is equal to
     //
     //   y_l = net^l( \sum_{j=1}^h z_j w_{jl} )
-    //
+
+    // layers is a list, every number in the list is the amount of neurons in
+    // that particular list
     this.layers = [];
     this.input = [];
     this.output = [];
+
+    this.initialize = function(layers){
+       this.layers = layers;
+    }
 }
 
 function NeuronLayer(){
     // A layer of neurons
     this.neurons = [];
+
+    // neurons is a list, the length of the list is the amount of neurons
+    // required, and the elements of the list are lists with the arguments
+    // for the neuron, e.g:
+    //   [ [ [1, 2, 3], 1.3, 4.2, 5.6, 3.1 ], ... ]
+    this.initialize = function(neurons){
+        for(var i=0; i<neurons.length; i++){
+            this.neurons.push(utils.construct(Neuron, neurons[i]));
+        }
+    }
 
     this.update = function(){
         for(var i=0; i<neurons.length; i++){
@@ -61,11 +79,11 @@ function NeuronLayer(){
     }
 }
 
-function Neuron(mu_s, sigma_s, mu_d, sigma_d){
+function Neuron(weights, mu_s, sigma_s, mu_d, sigma_d){
     // One neuron
     // net_s and net_d are calculated if the corresponding variables are
     // passed as arguments
-    this.weights = [];
+    this.weights = weights;
     this.mu_s = mu_s;
     this.sigma_s = sigma_s;
     this.mu_d = mu_d;
