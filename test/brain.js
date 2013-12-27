@@ -48,5 +48,14 @@ describe('Brain', function(){
                 assert.equal(neuron_layer.neurons[i].sigma_d, neuron_arguments[i][4]);
             }
         });
+
+        it('should correctly process input to output', function(){
+            var neuron_arguments = [ [ [1, 2, 3], 30, 3 ], [ [2, 3, 4], 60, 6 ] ];
+            var neuron_layer = new brain.NeuronLayer();
+            neuron_layer.initialize(neuron_arguments);
+            neuron_layer.inputs = [5, 6, 7];
+            neuron_layer.update();
+            assert.deepEqual(neuron_layer.outputs, [0.9714344992154497, -0.19926259708319183]);
+        });
     });
 });

@@ -61,6 +61,8 @@ function Brain(){
 function NeuronLayer(){
     // A layer of neurons
     this.neurons = [];
+    this.inputs = [];
+    this.outputs = [];
 
     // neurons is a list, the length of the list is the amount of neurons
     // required, and the elements of the list are lists with the arguments
@@ -73,8 +75,8 @@ function NeuronLayer(){
     }
 
     this.update = function(){
-        for(var i=0; i<neurons.length; i++){
-            neurons[i].process_inputs();
+        for(var i=0; i<this.neurons.length; i++){
+            this.outputs[i] = this.neurons[i].process_inputs(this.inputs);
         }
     }
 }
