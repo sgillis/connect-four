@@ -22,7 +22,8 @@ module.exports = {
         // the place of the summation over the inputs. m^j_d and \sigma^j_d are
         // defined as follows:
         //
-        //   m^j_d = p_{j+1, j} net^{j+1}_s \sigma^j_d = p_{j-1, j} net^{j-1}_s
+        //   m^j_d = p_{j+1, j} net^{j+1}_s
+        //   \sigma^j_d = p_{j-1, j} net^{j-1}_s
         //
         // with the restrications that \sigma^0_d = p_{0, 1} and m^{h}_d =
         // p_{h+1,h} (where h is the number of neurons).
@@ -65,28 +66,17 @@ module.exports = {
         this.sigma_d = sigma_d;
 
         this.process_inputs = function(inputs){
-            var net_input = 0;
+            var output = 0;
             for(var i=0; i<inputs.length; i++){
-                net_input += inputs[i]*this.weights[i];
+                output += inputs[i]*this.weights[i];
             }
-            if(mu_s === undefined){
-                return net_input;
+            if(mu_s !== undefined && sigma_s !== undefined){
+                output = Sigmoid(output, mu_s, sigma_s);
             }
-        }
-    },
-
-    sigmoid: function Sigmoid(x, m, s){
-        // Calculates the sigmoid function
-        //
-        //   sigmoid(x, m, s) =
-        //     exp( -(x-m)^2 / (2s^2) ) - 1   if x<m
-        //     1 - exp( -(x-m)^2 / (2s^2) )   otherwise
-        //
-        exp = Math.exp( -Math.pow(x-m,2) / (2*Math.pow(s,2)) );
-        if(x<m){
-            return exp - 1;
-        } else {
-            return 1 - exp;
+            if(mu_d !== undefined && sigma_d !== undefined){
+                output = Sigmoid(output, mu_d, sigma_d);
+            }
+            return output;
         }
     },
 
@@ -101,3 +91,20 @@ module.exports = {
         };
     }
 }
+
+function Sigmoid(x, m, s){
+    // Calculates the sigmoid function
+    //
+    //   sigmoid(x, m, s) =
+    //     exp( -(x-m)^2 / (2s^2) ) - 1   if x<m
+    //     1 - exp( -(x-m)^2 / (2s^2) )   otherwise
+    //
+    exp = Math.exp( -Math.pow(x-m,2) / (2*Math.pow(s,2)) );
+    if(x<m){
+        return exp - 1;
+    } else {
+        return 1 - exp;
+    }
+}
+
+
