@@ -33,9 +33,6 @@ function Brain(){
     //   m^j_d = p_{j+1, j} net^{j+1}_s
     //   \sigma^j_d = p_{j-1, j} net^{j-1}_s
     //
-    // with the restrications that \sigma^0_d = p_{0, 1} and m^{h}_d =
-    // p_{h+1,h} (where h is the number of neurons).
-    //
     // Thus in this model we have three layers of neurons, the input layer,
     // the hidden layer and the output layer. The input layer neurons transmit
     // all incoming signals to all neurons in the hidden layer. The hidden
@@ -63,45 +60,69 @@ function NeuronLayer(){
     this.neurons = [];
     this.inputs = [];
     this.outputs = [];
+    this.feedback_weights = [];
 
     // neurons is a list, the length of the list is the amount of neurons
     // required, and the elements of the list are lists with the arguments
     // for the neuron, e.g:
     //   [ [ [1, 2, 3], 1.3, 4.2, 5.6, 3.1 ], ... ]
-    this.initialize = function(neurons){
+    //
+    // feedback_weights is a list of two lists of numbers representing the
+    // p_j's from the comment in Brain. The first list is a list of p_{i+1, i},
+    // the second list is a list of p_{i, i+1}
+    this.initialize = function(neurons, feedback_weights){
         for(var i=0; i<neurons.length; i++){
             this.neurons.push(utils.construct(Neuron, neurons[i]));
+        }
+        if(feedback_weights !== undefined){
+            this.feedback_weights = feedback_weights;
         }
     }
 
     this.update = function(){
-        for(var i=0; i<this.neurons.length; i++){
-            this.outputs[i] = this.neurons[i].process_inputs(this.inputs);
+        this.outputs = [];
+        if(this.feedback_weights.length > 0){
+            var net_s = [];
+            for(var i=0; i<this.neurons.length; i++){
+                net_s[i] = this.neurons[i].process_inputs(this.inputs);
+            }
+            for(var i=0; i<this.neurons.length; i++){
+                if(i == 0){
+                    sigma_d = this.feedback_weights[1][0]*net_s[this.neurons.length-1];
+                } else {
+                    sigma_d = this.feedback_weights[1][i]*net_s[i-1];
+                }
+                if(i == this.neurons.length - 1){
+                    mu_d = this.feedback_weights[0][i]*net_s[0];
+                } else {
+                    mu_d = this.feedback_weights[0][i]*net_s[i+1];
+                }
+                this.outputs[i] = Sigmoid(net_s[i], mu_d, sigma_d);
+            }
+        } else {
+            for(var i=0; i<this.neurons.length; i++){
+                this.outputs[i] = this.neurons[i].process_inputs(this.inputs);
+            }
         }
     }
 }
 
-function Neuron(weights, mu_s, sigma_s, mu_d, sigma_d){
+function Neuron(weights, mu_s, sigma_s){
     // One neuron
     // net_s and net_d are calculated if the corresponding variables are
     // passed as arguments
     this.weights = weights;
     this.mu_s = mu_s;
     this.sigma_s = sigma_s;
-    this.mu_d = mu_d;
-    this.sigma_d = sigma_d;
 
     // TODO fix mu_d and sigma_d functionality
-    this.process_inputs = function(inputs){
+    this.process_inputs = function(inputs, mu_d, sigma_d){
         var output = 0;
         for(var i=0; i<inputs.length; i++){
             output += inputs[i]*this.weights[i];
         }
         if(mu_s !== undefined && sigma_s !== undefined){
             output = Sigmoid(output, mu_s, sigma_s);
-        }
-        if(mu_d !== undefined && sigma_d !== undefined){
-            output = Sigmoid(output, mu_d, sigma_d);
         }
         return output;
     }
