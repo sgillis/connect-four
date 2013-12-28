@@ -43,16 +43,32 @@ function Brain(){
     // output signal is equal to
     //
     //   y_l = net^l( \sum_{j=1}^h z_j w_{jl} )
+    //
 
-    // layers is a list, every number in the list is the amount of neurons in
-    // that particular list
     this.layers = [];
-    this.input = [];
     this.output = [];
 
+    // layers is a list of lists where every list is of the form
+    // [ neurons, feedback_weights ]
+    // where neurons and feedback_weights are as defined by
+    // NeuronLayer.initialize
     this.initialize = function(layers){
-       this.layers = layers;
-    }
+        for(var i=0; i<layers.length; i++){
+            var neuron_layer = new NeuronLayer();
+            neuron_layer.initialize(layers[i][0], layers[i][1]);
+            this.layers.push(neuron_layer);
+        }
+    };
+
+    this.process = function(signals){
+        var input = signals;
+        for(var i=0; i<this.layers.length; i++){
+            this.layers[i].inputs = input;
+            this.layers[i].update();
+            input = this.layers[i].outputs;
+        }
+        this.output = this.layers[this.layers.length - 1].outputs;
+    };
 }
 
 function NeuronLayer(){
@@ -65,7 +81,7 @@ function NeuronLayer(){
     // neurons is a list, the length of the list is the amount of neurons
     // required, and the elements of the list are lists with the arguments
     // for the neuron, e.g:
-    //   [ [ [1, 2, 3], 1.3, 4.2, 5.6, 3.1 ], ... ]
+    //   [ [ [1, 2, 3], 1.3, 4.2 ], ... ]
     //
     // feedback_weights is a list of two lists of numbers representing the
     // p_j's from the comment in Brain. The first list is a list of p_{i+1, i},
