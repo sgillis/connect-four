@@ -1,11 +1,13 @@
-var utils = require('./utils.js')
+(function(exports){
+    exports.Brain = Brain;
+    exports.NeuronLayer = NeuronLayer;
+    exports.Neuron = Neuron;
+    exports.Genome = Genome;
+    exports.Sigmoid = Sigmoid;
+})(typeof exports === 'undefined'? this['brain']={} : exports);
 
-module.exports = {
-    Brain: Brain,
-    NeuronLayer: NeuronLayer,
-    Neuron: Neuron,
-    Genome: Genome,
-    Sigmoid: Sigmoid
+if(typeof require !== 'undefined'){
+    var utils = require('./utils.js');
 }
 
 function Brain(){

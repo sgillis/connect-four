@@ -1,6 +1,6 @@
-module.exports = {
-    construct: construct
-}
+(function(exports){
+    exports.construct = construct;
+})(typeof exports === 'undefined'? this['utils']={} : exports);
 
 function availableSpot(x, y, pieces){
     // Return the lowest available position for this column
