@@ -63,6 +63,24 @@ function fourConnected(pieces){
     return false;
 }
 
+function piecesArray(pieces){
+    // returns an array of all positions with a 0 if no piece is present, 1 if
+    // player 1 has a piece there and 2 if player 2 has a piece there
+    var return_array = [];
+    for(var i=0; i<7; i++){
+        for(var j=0; j<7; j++){
+            if(indexOfArr(pieces[0], [j, i])>-1){
+                return_array.push(1);
+            } else if(indexOfArr(pieces[1], [j, i])>-1){
+                return_array.push(2);
+            } else{
+                return_array.push(0);
+            }
+        }
+    }
+    return return_array;
+}
+
 // Two functions for getting the index of a subarray
 // From:
 // http://codereview.stackexchange.com/questions/11070/snippet-of-custom-array-indexof-that-supports-nested-arrays

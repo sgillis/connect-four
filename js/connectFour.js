@@ -103,7 +103,12 @@ function Bot($scope, $log, socket){
         game_name: $scope.game_name,
     });
 
-    this.move = function(){
+    this.genome = new brain.Genome();
+    this.genome.random_generation(49, [ [49, true, 5, 49*5, 5], [7, false, 5, 35, 5] ]);
+    this.brain = new brain.Brain();
+    this.brain.initialize(this.genome.weights);
+
+    this.random_move = function(){
         $log.info('bot making move');
         var made_move = false;
         while(made_move == false){
@@ -113,6 +118,18 @@ function Bot($scope, $log, socket){
                 $scope.makeMove($scope.game, spot);
                 made_move = true;
             }
+        }
+    }
+    
+    this.move = function(){
+        this.brain.process(piecesArray($scope.game.pieces));
+        var largest = Math.max.apply(Math, this.brain.output);
+        var position = indexOfArr(this.brain.output, largest);
+        console.log(position);
+        var spot = availableSpot(position, 0, $scope.game.pieces);
+        if(spot[1] > -1){
+            // Make move locally
+            $scope.makeMove($scope.game, spot);
         }
     }
 }
