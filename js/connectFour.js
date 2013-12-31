@@ -104,7 +104,7 @@ function Bot($scope, $log, socket){
     });
 
     this.genome = new brain.Genome();
-    this.genome.random_generation(49, [ [49, true, 5, 49*5, 5], [7, false, 5, 35, 5] ]);
+    this.genome.random_generation(49, [ [49, true, 5, 5, 5], [7, false, 5, 5, 5] ]);
     this.brain = new brain.Brain();
     this.brain.initialize(this.genome.weights);
 
@@ -125,7 +125,6 @@ function Bot($scope, $log, socket){
         this.brain.process(piecesArray($scope.game.pieces));
         var largest = Math.max.apply(Math, this.brain.output);
         var position = indexOfArr(this.brain.output, largest);
-        console.log(position);
         var spot = availableSpot(position, 0, $scope.game.pieces);
         if(spot[1] > -1){
             // Make move locally
