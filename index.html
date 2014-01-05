@@ -20,6 +20,9 @@
         <button type="button" data-ng-click="create_bot()" data-ng-hide="players.length > 1" class="btn">
             Play against a bot
         </button>
+        <button type="button" data-ng-click="start_webworker()" class="btn">
+            Start webworker
+        </button>
         <div class="container">
             <div class="row" ng-repeat="y in game.range">
                 <div class="col-xs-1" ng-repeat="x in game.range"

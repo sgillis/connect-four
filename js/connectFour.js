@@ -1,8 +1,8 @@
 'use strict';
 
-var connectFour = angular.module('connectFour', ['socket-io']);
+var connectFour = angular.module('connectFour', ['socket-io', 'webworker']);
 
-connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
+connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, webworker){
     $scope.game = new Game();
 
     // This function is called to submit a move, and decides if it was a valid
@@ -57,6 +57,12 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket){
             $scope.bot = new Bot($scope, $log, socket);
             $scope.players.push( ($scope.name + 1) % 2 );
         }
+    }
+
+    // Webworker
+    $scope.start_webworker = function(){
+        var result = worker.doWork('a lot of work');
+        $log.info(result);
     }
 
     // Socket functions

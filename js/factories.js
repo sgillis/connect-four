@@ -19,3 +19,21 @@ angular.module('socket-io', []).
             }
         };
     });
+
+angular.module('webworker', []).
+    factory('worker', ['$q', function($q){
+        var worker = new Worker('webworker.js');
+        var defer;
+        worker.addEventListener('message', function(e){
+            console.log('Worker said: ', e.data);
+            defer.resolve(e.data);
+        }, false);
+
+        return {
+            doWork: function(data){
+                defer = $q.defer();
+                worker.postMessage(data);
+                return defer.promise;
+            }
+        };
+    }]);
