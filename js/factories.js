@@ -22,12 +22,15 @@ angular.module('socket-io', []).
 
 angular.module('webworker', []).
     factory('worker', ['$q', function($q){
-        var worker = new Worker('webworker.js');
+        var worker = new Worker('js/webworker.js');
         var defer;
-        worker.addEventListener('message', function(e){
-            console.log('Worker said: ', e.data);
-            defer.resolve(e.data);
-        }, false);
+        // worker.addEventListener('message', function(e){
+        //     console.log('Worker said: ', e.data);
+        //     defer.resolve(e.data);
+        // }, false);
+        worker.onmessage = function(e){
+            console.log('worker finished');
+        };
 
         return {
             doWork: function(data){

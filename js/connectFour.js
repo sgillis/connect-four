@@ -2,7 +2,7 @@
 
 var connectFour = angular.module('connectFour', ['socket-io', 'webworker']);
 
-connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, webworker){
+connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worker){
     $scope.game = new Game();
 
     // This function is called to submit a move, and decides if it was a valid
@@ -61,6 +61,7 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, webwo
 
     // Webworker
     $scope.start_webworker = function(){
+        $log.info('starting worker');
         var result = worker.doWork('a lot of work');
         $log.info(result);
     }

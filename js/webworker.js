@@ -1,3 +1,4 @@
 var webworker = function(){
-    postMessage('I work');
+    console.log('I work');
+    return 'whoop';
 };
