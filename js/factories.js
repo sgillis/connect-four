@@ -21,20 +21,17 @@ angular.module('socket-io', []).
     });
 
 angular.module('webworker', []).
-    factory('worker', ['$q', function($q){
+    factory('worker', ['$q', '$log', function($q, $log){
         var worker = new Worker('js/webworker.js');
         var defer;
-        // worker.addEventListener('message', function(e){
-        //     console.log('Worker said: ', e.data);
-        //     defer.resolve(e.data);
-        // }, false);
         worker.onmessage = function(e){
-            console.log('worker finished');
+            defer.resolve(e.data);
         };
 
         return {
             doWork: function(data){
                 defer = $q.defer();
+                console.log('Submitting:',data);
                 worker.postMessage(data);
                 return defer.promise;
             }

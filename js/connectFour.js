@@ -61,9 +61,11 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
 
     // Webworker
     $scope.start_webworker = function(){
-        $log.info('starting worker');
+        $log.info('Starting worker');
         var result = worker.doWork('a lot of work');
-        $log.info(result);
+        result.then(function(data){
+            console.log('Worker replied:', data);
+        });
     }
 
     // Socket functions
