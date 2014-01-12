@@ -91,8 +91,15 @@ var BrainPool = (function(){
         return brains;
     }
 
+    var getFighters = function(){
+        // TODO implement function that will get two bots that have not yet
+        // fought eachother
+        return [brains[0], brains[1]];
+    }
+
     return {
-        getBrains: getBrains
+        getBrains: getBrains,
+        getFighters: getFighters
     }
 }());
 
@@ -104,7 +111,8 @@ io.sockets.on('connection', function(socket){
     socket.emit('init', {
         name: names.name,
         game_name: names.game.name,
-        players: names.game.players
+        players: names.game.players,
+        fighters: BrainPool.getFighters()
     });
 
     socket.broadcast.emit('user:join', {

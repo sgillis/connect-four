@@ -73,6 +73,7 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
         $scope.name = data.name;
         $scope.game_name = data.game_name;
         $scope.players = data.players;
+        $scope.fighters = data.fighters;
     });
 
     socket.on('move', function(data){
