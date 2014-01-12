@@ -75,8 +75,31 @@ var gameStates = (function(){
     };
 }());
 
+var BrainPool = (function(){
+    var brain = require('./js/brain.js');
+    var brains = [];
+    var nr_brains = 10;
+    var genomes = [];
+    for(var i=0; i<nr_brains; i++){
+        genomes[i] = new brain.Genome();
+        genomes[i].random_generation(49, [ [49, true, 5, 5, 5], [7, false, 5, 5, 5] ]);
+        brains[i] = new brain.Brain();
+        brains[i].initialize(genomes[i].weights);
+    }
+
+    var getBrains = function(){
+        return brains;
+    }
+
+    return {
+        getBrains: getBrains
+    }
+}());
+
+
 io.sockets.on('connection', function(socket){
     var names = gameStates.getNames();
+    var brains = BrainPool.getBrains();
 
     socket.emit('init', {
         name: names.name,
