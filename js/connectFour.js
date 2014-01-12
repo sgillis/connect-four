@@ -138,6 +138,9 @@ function Bot($scope, $log, socket){
         if(spot[1] > -1){
             // Make move locally
             $scope.makeMove($scope.game, spot);
+        } else {
+            // Make random move
+            this.random_move()
         }
     }
 }
