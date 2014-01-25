@@ -84,16 +84,22 @@ function NeuronLayer(){
     this.feedback_weights = [];
 
     // neurons is a list, the length of the list is the amount of neurons
-    // required, and the elements of the list are lists with the arguments
-    // for the neuron, e.g:
-    //   [ [ [1, 2, 3], 1.3, 4.2 ], ... ]
+    // required, and the elements of the list are descriptions of neurons in 
+    // the form
+    //
+    //   { weights: [1, 2, 3],
+    //     mu_s: 1.3,
+    //     sigma_s: 4.2 }
     //
     // feedback_weights is a list of two lists of numbers representing the
     // p_j's from the comment in Brain. The first list is a list of p_{i+1, i},
     // the second list is a list of p_{i, i+1}
     this.initialize = function(neurons, feedback_weights){
         for(var i=0; i<neurons.length; i++){
-            this.neurons.push(utils.construct(Neuron, neurons[i]));
+            this.neurons.push(utils.construct(
+                Neuron,
+                [neurons[i].weights, neurons[i].mu_s, neurons[i].sigma_s]
+            ));
         }
         if(feedback_weights !== undefined){
             this.feedback_weights = feedback_weights;
@@ -182,7 +188,9 @@ function Genome(){
                 var mu_dna = Math.random()*2*layers[i][3] - layers[i][3];
                 // Create sigma_s
                 var sigma_dna = Math.random()*2*layers[i][4] - layers[i][4];
-                var neuron_dna = [weight_dna, mu_dna, sigma_dna];
+                var neuron_dna = { weights: weight_dna,
+                                   mu_s: mu_dna,
+                                   sigma_s: sigma_dna };
                 neuronlayer_dna.push(neuron_dna);
             }
             if(layers[i][1]){

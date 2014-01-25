@@ -8,17 +8,29 @@ describe('Brain', function(){
         var layers = [
             [
                 [
-                    [ [1, 2, 3], 30, 3 ],
-                    [ [2, 3, 4], 60, 6 ],
-                    [ [3, 4, 5], 90, 5 ]
+                    { weights: [1, 2, 3],
+                      mu_s: 30,
+                      sigma_s: 3 },
+                    { weights: [2, 3, 4],
+                      mu_s: 60,
+                      sigma_s: 6 },
+                    { weights: [3, 4, 5],
+                      mu_s: 90,
+                      sigma_s: 5 }
                 ],
                 undefined
             ],
             [
                 [
-                    [ [1, 2, 3], 30, 3 ],
-                    [ [2, 3, 4], 60, 6 ],
-                    [ [3, 4, 5], 90, 5 ]
+                    { weights: [1, 2, 3],
+                      mu_s: 30,
+                      sigma_s: 3 },
+                    { weights: [2, 3, 4],
+                      mu_s: 60,
+                      sigma_s: 6 },
+                    { weights: [3, 4, 5],
+                      mu_s: 90,
+                      sigma_s: 5 }
                 ],
                 [
                     [5.2, 1.2, 7.3],
@@ -39,18 +51,32 @@ describe('Brain', function(){
          var layers = [
             [
                 [
-                    [ [1, 2, 3], 15, 3 ],
-                    [ [2, 3, 4], 30, 6 ],
-                    [ [3, 4, 5], 10, 5 ]
+                    { weights: [1, 2, 3],
+                      mu_s: 15,
+                      sigma_s: 3 },
+                    { weights: [2, 3, 4],
+                      mu_s: 30,
+                      sigma_s: 6 },
+                    { weights: [3, 4, 5],
+                      mu_s: 10,
+                      sigma_s: 5 }
                 ],
                 undefined
             ],
             [
                 [
-                    [ [1, 2, 3], 0.2, 3 ],
-                    [ [2, 3, 4], -0.1, 0.2 ],
-                    [ [3, 4, 5], -0.8, 0.8 ],
-                    [ [5, 6, 7], -0.3, 5 ]
+                    { weights: [1, 2, 3],
+                      mu_s: 0.2,
+                      sigma_s: 3 },
+                    { weights: [2, 3, 4],
+                      mu_s: -0.1,
+                      sigma_s: 0.2 },
+                    { weights: [3, 4, 5],
+                      mu_s: -0.8,
+                      sigma_s: 0.8 },
+                    { weights: [5, 6, 7],
+                      mu_s: -0.3,
+                      sigma_s: 5 }
                 ],
                 [
                     [5.2, 1.2, 7.3, 1.2],
@@ -94,18 +120,24 @@ describe('Brain', function(){
         });
 
         it('should create 2 neurons with all mus and sigmas set', function(){
-            var neuron_arguments = [[[1], 1.1, 2.2], [[2], 4.3, 4.5]];
+            var neuron_arguments = [
+                { weights: [1], mu_s: 1.1, sigma_s: 2.2},
+                { weights: [2], mu_s: 4.3, sigma_s: 4.5}
+            ];
             var neuron_layer = new brain.NeuronLayer();
             neuron_layer.initialize(neuron_arguments);
             assert.equal(neuron_layer.neurons.length, 2);
             for(var i=0; i<neuron_layer.neurons.length; i++){
-                assert.equal(neuron_layer.neurons[i].mu_s, neuron_arguments[i][1]);
-                assert.equal(neuron_layer.neurons[i].sigma_s, neuron_arguments[i][2]);
+                assert.equal(neuron_layer.neurons[i].mu_s, neuron_arguments[i].mu_s);
+                assert.equal(neuron_layer.neurons[i].sigma_s, neuron_arguments[i].sigma_s);
             }
         });
 
         it('should correctly process input to output', function(){
-            var neuron_arguments = [ [ [1, 2, 3], 30, 3 ], [ [2, 3, 4], 60, 6 ] ];
+            var neuron_arguments = [
+                { weights: [1, 2, 3], mu_s: 30, sigma_s: 3},
+                { weights: [2, 3, 4], mu_s: 60, sigma_s: 6},
+            ];
             var neuron_layer = new brain.NeuronLayer();
             neuron_layer.initialize(neuron_arguments);
             neuron_layer.inputs = [5, 6, 7];
@@ -114,7 +146,11 @@ describe('Brain', function(){
         });
 
         it('should use dynamic sigmoid function if feedback weights are given', function(){
-            var neuron_arguments = [ [ [1, 2, 3], 30, 3 ], [ [2, 3, 4], 60, 6 ], [ [3, 4, 5], 90, 5 ] ];
+            var neuron_arguments = [
+                { weights: [1, 2, 3], mu_s: 30, sigma_s: 3},
+                { weights: [2, 3, 4], mu_s: 60, sigma_s: 6},
+                { weights: [3, 4, 5], mu_s: 90, sigma_s: 5},
+            ];
             var feedback_weights = [ [5.2, 1.2, 7.3], [6.5, 4.3, 1] ];
             var neuron_layer = new brain.NeuronLayer();
             neuron_layer.initialize(neuron_arguments, feedback_weights);
@@ -134,9 +170,9 @@ describe('Brain', function(){
             assert.equal(genome.weights[0].length, 2);
             assert.equal(genome.weights[0][0].length, 4);
             assert.equal(genome.weights[1][0].length, 10);
-            assert.equal(genome.weights[0][0][0].length, 3);
+            assert.property(genome.weights[0][0][0], 'weights');
             assert.equal(genome.weights[0][1][0].length, 4);
-            assert.equal(genome.weights[1][0][0][0].length, 4);
+            assert.equal(genome.weights[1][0][0].weights.length, 4);
             assert.equal(genome.weights[1][1][0].length, 10);
         });
     });
