@@ -4,6 +4,18 @@ connect-four
 Connect four in AngularJS and Node.js
 
 
+Tests
+-----
+
+Run tests by installing mocha
+
+    $ npm install -g mocha
+
+and then simply executing mocha
+
+    $ mocha
+
+
 Todo
 ----
 
