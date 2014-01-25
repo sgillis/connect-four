@@ -1,7 +1,9 @@
 var chai = require('chai');
+var chaistats = require('chai-stats');
 var brain = require('../js/brain.js');
 var utils = require('../js/utils.js');
 var assert  = chai.assert;
+chai.use(chaistats);
 
 describe('Brain', function(){
     it('should create the required neuron layers', function(){
@@ -142,7 +144,7 @@ describe('Brain', function(){
             neuron_layer.initialize(neuron_arguments);
             neuron_layer.inputs = [5, 6, 7];
             neuron_layer.update();
-            assert.deepEqual(neuron_layer.outputs, [0.9714344992154497, -0.19926259708319183]);
+            assert.deepAlmostEqual(neuron_layer.outputs, [0.9714344992154497, -0.1992625970831], 5);
         });
 
         it('should use dynamic sigmoid function if feedback weights are given', function(){
@@ -156,7 +158,7 @@ describe('Brain', function(){
             neuron_layer.initialize(neuron_arguments, feedback_weights);
             neuron_layer.inputs = [5, 6, 7];
             neuron_layer.update();
-            assert.deepEqual(neuron_layer.outputs, [0.0471263465776689, 0.027891476129542903, -1]);
+            assert.deepAlmostEqual(neuron_layer.outputs, [0.0471263465776689, 0.027891476129542903, -1], 5);
         });
     });
 
