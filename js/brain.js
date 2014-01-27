@@ -81,7 +81,7 @@ function NeuronLayer(){
     this.neurons = [];
     this.inputs = [];
     this.outputs = [];
-    this.feedback_weights = [];
+    this.feedback_weights = undefined;
 
     // neurons is a list, the length of the list is the amount of neurons
     // required, and the elements of the list are descriptions of neurons in 
@@ -91,9 +91,13 @@ function NeuronLayer(){
     //     mu_s: 1.3,
     //     sigma_s: 4.2 }
     //
-    // feedback_weights is a list of two lists of numbers representing the
+    // feedback_weights is a dict of two lists of numbers representing the
     // p_j's from the comment in Brain. The first list is a list of p_{i+1, i},
-    // the second list is a list of p_{i, i+1}
+    // the second list is a list of p_{i, i+1}. Thus it should be of the form
+    //
+    //   { mu_d_weights: [1, 2, 3, ],
+    //     sigma_d_weights: [1, 2, 3, ] }
+    //
     this.initialize = function(neurons, feedback_weights){
         for(var i=0; i<neurons.length; i++){
             this.neurons.push(utils.construct(
@@ -108,21 +112,21 @@ function NeuronLayer(){
 
     this.update = function(){
         this.outputs = [];
-        if(this.feedback_weights.length > 0){
+        if(this.feedback_weights !== undefined){
             var net_s = [];
             for(var i=0; i<this.neurons.length; i++){
                 net_s[i] = this.neurons[i].process_inputs(this.inputs);
             }
             for(var i=0; i<this.neurons.length; i++){
                 if(i == 0){
-                    sigma_d = this.feedback_weights[1][0]*net_s[this.neurons.length-1];
+                    sigma_d = this.feedback_weights.sigma_d_weights[0]*net_s[this.neurons.length-1];
                 } else {
-                    sigma_d = this.feedback_weights[1][i]*net_s[i-1];
+                    sigma_d = this.feedback_weights.sigma_d_weights[i]*net_s[i-1];
                 }
                 if(i == this.neurons.length - 1){
-                    mu_d = this.feedback_weights[0][i]*net_s[0];
+                    mu_d = this.feedback_weights.mu_d_weights[i]*net_s[0];
                 } else {
-                    mu_d = this.feedback_weights[0][i]*net_s[i+1];
+                    mu_d = this.feedback_weights.mu_d_weights[i]*net_s[i+1];
                 }
                 this.outputs[i] = Sigmoid(net_s[i], mu_d, sigma_d);
             }
@@ -200,7 +204,10 @@ function Genome(){
                     mud_dna.push(Math.random()*2*layers[i][3] - layers[i][3]);
                     sigmad_dna.push(Math.random()*2*layers[i][4] - layers[i][4]);
                 }
-                var feedback_dna = [ mud_dna, sigmad_dna ];
+                var feedback_dna = {
+                    mu_d_weights: mud_dna,
+                    sigma_d_weights: sigmad_dna
+                };
             } else {
                 var feedback_dna = undefined
             }

@@ -34,17 +34,18 @@ describe('Brain', function(){
                       mu_s: 90,
                       sigma_s: 5 }
                 ],
-                [
-                    [5.2, 1.2, 7.3],
-                    [6.5, 4.3, 1]
-                ]
+                { mu_d_weights: [5.2, 1.2, 7.3],
+                  sigma_d_weights: [6.5, 4.3, 1] }
             ],
         ];
         var neuralnet = new brain.Brain();
         neuralnet.initialize(layers);
         assert.equal(neuralnet.layers.length, 2);
-        assert.deepEqual(neuralnet.layers[0].feedback_weights, []);
-        assert.deepEqual(neuralnet.layers[1].feedback_weights, [[5.2, 1.2, 7.3],[6.5, 4.3, 1]]);
+        assert.equal(neuralnet.layers[0].feedback_weights, undefined);
+        assert.deepEqual(neuralnet.layers[1].feedback_weights,
+            { mu_d_weights: [5.2, 1.2, 7.3],
+              sigma_d_weights: [6.5, 4.3, 1] }
+        );
         assert.deepEqual(neuralnet.layers[0].neurons[1].weights, [2, 3, 4]);
         assert.equal(neuralnet.layers[0].neurons[1].mu_s, 60);
     });
@@ -80,11 +81,9 @@ describe('Brain', function(){
                       mu_s: -0.3,
                       sigma_s: 5 }
                 ],
-                [
-                    [5.2, 1.2, 7.3, 1.2],
-                    [6.5, 4.3, 1, 2]
-                ]
-            ],
+                { mu_d_weights: [5.2, 1.2, 7.3, 1.2],
+                  sigma_d_weights: [6.5, 4.3, 1, 2] }
+            ]
         ];
         var neuralnet = new brain.Brain();
         neuralnet.initialize(layers);
@@ -153,7 +152,10 @@ describe('Brain', function(){
                 { weights: [2, 3, 4], mu_s: 60, sigma_s: 6},
                 { weights: [3, 4, 5], mu_s: 90, sigma_s: 5},
             ];
-            var feedback_weights = [ [5.2, 1.2, 7.3], [6.5, 4.3, 1] ];
+            var feedback_weights = {
+                mu_d_weights: [5.2, 1.2, 7.3],
+                sigma_d_weights: [6.5, 4.3, 1]
+            };
             var neuron_layer = new brain.NeuronLayer();
             neuron_layer.initialize(neuron_arguments, feedback_weights);
             neuron_layer.inputs = [5, 6, 7];
@@ -173,9 +175,9 @@ describe('Brain', function(){
             assert.equal(genome.weights[0][0].length, 4);
             assert.equal(genome.weights[1][0].length, 10);
             assert.property(genome.weights[0][0][0], 'weights');
-            assert.equal(genome.weights[0][1][0].length, 4);
+            assert.equal(genome.weights[0][1].mu_d_weights.length, 4);
             assert.equal(genome.weights[1][0][0].weights.length, 4);
-            assert.equal(genome.weights[1][1][0].length, 10);
+            assert.equal(genome.weights[1][1].mu_d_weights.length, 10);
         });
     });
 });
