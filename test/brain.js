@@ -8,8 +8,8 @@ chai.use(chaistats);
 describe('Brain', function(){
     it('should create the required neuron layers', function(){
         var layers = [
-            [
-                [
+            {
+                neurons: [
                     { weights: [1, 2, 3],
                       mu_s: 30,
                       sigma_s: 3 },
@@ -20,10 +20,10 @@ describe('Brain', function(){
                       mu_s: 90,
                       sigma_s: 5 }
                 ],
-                undefined
-            ],
-            [
-                [
+                feedback_weights: undefined
+            },
+            {
+                neurons: [
                     { weights: [1, 2, 3],
                       mu_s: 30,
                       sigma_s: 3 },
@@ -34,9 +34,9 @@ describe('Brain', function(){
                       mu_s: 90,
                       sigma_s: 5 }
                 ],
-                { mu_d_weights: [5.2, 1.2, 7.3],
+                feedback_weights: { mu_d_weights: [5.2, 1.2, 7.3],
                   sigma_d_weights: [6.5, 4.3, 1] }
-            ],
+            },
         ];
         var neuralnet = new brain.Brain();
         neuralnet.initialize(layers);
@@ -52,8 +52,8 @@ describe('Brain', function(){
 
     it('should properly process input', function(){
          var layers = [
-            [
-                [
+            {
+                neurons: [
                     { weights: [1, 2, 3],
                       mu_s: 15,
                       sigma_s: 3 },
@@ -64,10 +64,10 @@ describe('Brain', function(){
                       mu_s: 10,
                       sigma_s: 5 }
                 ],
-                undefined
-            ],
-            [
-                [
+                feedback_weights: undefined
+            },
+            {
+                neurons: [
                     { weights: [1, 2, 3],
                       mu_s: 0.2,
                       sigma_s: 3 },
@@ -81,9 +81,10 @@ describe('Brain', function(){
                       mu_s: -0.3,
                       sigma_s: 5 }
                 ],
-                { mu_d_weights: [5.2, 1.2, 7.3, 1.2],
-                  sigma_d_weights: [6.5, 4.3, 1, 2] }
-            ]
+                feedback_weights: { 
+                    mu_d_weights: [5.2, 1.2, 7.3, 1.2],
+                    sigma_d_weights: [6.5, 4.3, 1, 2] }
+            }
         ];
         var neuralnet = new brain.Brain();
         neuralnet.initialize(layers);
@@ -171,13 +172,14 @@ describe('Brain', function(){
             var genome = new brain.Genome();
             genome.random_generation(nr_inputs, layers);
             assert.equal(genome.weights.length, 2);
-            assert.equal(genome.weights[0].length, 2);
-            assert.equal(genome.weights[0][0].length, 4);
-            assert.equal(genome.weights[1][0].length, 10);
-            assert.property(genome.weights[0][0][0], 'weights');
-            assert.equal(genome.weights[0][1].mu_d_weights.length, 4);
-            assert.equal(genome.weights[1][0][0].weights.length, 4);
-            assert.equal(genome.weights[1][1].mu_d_weights.length, 10);
+            assert.property(genome.weights[0], 'neurons');
+            assert.property(genome.weights[0], 'feedback_weights');
+            assert.equal(genome.weights[0].neurons.length, 4);
+            assert.equal(genome.weights[1].neurons.length, 10);
+            assert.property(genome.weights[0].neurons[0], 'weights');
+            assert.equal(genome.weights[0].feedback_weights.mu_d_weights.length, 4);
+            assert.equal(genome.weights[1].neurons[0].weights.length, 4);
+            assert.equal(genome.weights[1].feedback_weights.mu_d_weights.length, 10);
         });
     });
 });

@@ -52,15 +52,30 @@ function Brain(){
     this.output = [];
     this.genome = [];
 
-    // layers is a list of lists where every list is of the form
-    // [ neurons, feedback_weights ]
+    // layers is a list of dicts where every list is of the form
+    // { neurons: [
+    //       { weights: [1, 2, 3],
+    //         mu_s: 30,
+    //         sigma_s: 3 },
+    //       { weights: [2, 3, 4],
+    //         mu_s: 60,
+    //         sigma_s: 120 },
+    //       ...
+    //   ],
+    //   feedback_weights: {
+    //       mu_d_weights: [1, 2, 3, ...],
+    //       sigma_d_weights: [1, 2, 3, ...]
+    //   }
+    // }
     // where neurons and feedback_weights are as defined by
     // NeuronLayer.initialize
     this.initialize = function(layers){
         this.genome = layers;
         for(var i=0; i<layers.length; i++){
             var neuron_layer = new NeuronLayer();
-            neuron_layer.initialize(layers[i][0], layers[i][1]);
+            neuron_layer.initialize(
+                layers[i].neurons,
+                layers[i].feedback_weights);
             this.layers.push(neuron_layer);
         }
     };
@@ -211,7 +226,9 @@ function Genome(){
             } else {
                 var feedback_dna = undefined
             }
-            brain_dna.push([ neuronlayer_dna, feedback_dna ]);
+            brain_dna.push({
+                neurons: neuronlayer_dna,
+                feedback_weights: feedback_dna });
         }
         this.weights = brain_dna;
     };
