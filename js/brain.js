@@ -175,7 +175,9 @@ function Neuron(weights, mu_s, sigma_s){
 
 function Genome(){
     // Contains the weights for a brain
-    this.weights = [];
+    this.dna = {
+        layers: []
+    }
 
     // Create a random brain configuration based on the layers argument.
     // layers is a list of lists. Every list represents a single neuronlayer.
@@ -230,7 +232,7 @@ function Genome(){
                 neurons: neuronlayer_dna,
                 feedback_weights: feedback_dna });
         }
-        this.weights = brain_dna;
+        this.dna.layers = brain_dna;
     };
 }
 
