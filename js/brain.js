@@ -36,7 +36,7 @@ function Brain(){
     //   m^j_d = p_{j+1, j} net^{j+1}_s
     //   \sigma^j_d = p_{j-1, j} net^{j-1}_s
     //
-    // Thus in this model we have three layers of neurons, the input layer,
+    // Thus in this model we have thr.max_sigmalayers of neurons, the input layer,
     // the hidden layer and the output layer. The input layer neurons transmit
     // all incoming signals to all neurons in the hidden layer. The hidden
     // layer neurons in turn submit their outputs to the output neuron layer,
@@ -180,9 +180,13 @@ function Genome(){
     }
 
     // Create a random brain configuration based on the layers argument.
-    // layers is a list of lists. Every list represents a single neuronlayer.
-    // The lists should have the form:
-    //   [ nr_neurons, feedbacks, max_weight, max_mu, max_sigma ]
+    // layers is a list of dicts. Every dict represents a single neuronlayer.
+    // The dicts should have the form:
+    //   { nr_neurons: 4,
+    //     feedbacks: true,
+    //     max_weight: 5.0,
+    //     max_mu: 5.0,
+    //     max_sigma: 5.0 }
     // where nr_neurons is the amount of neurons in the layer, and feedbacks
     // is a boolean to indicate whether or not there should be feedback weights
     // in the layer.
@@ -194,32 +198,33 @@ function Genome(){
         var brain_dna = [];
         for(var i=0; i<layers.length; i++){
             var neuronlayer_dna = [];
-            for(var neuron=0; neuron<layers[i][0]; neuron++){
+            for(var neuron=0; neuron<layers[i].nr_neurons; neuron++){
                 // Create weights
                 var weight_dna = [];
                 if(i == 0){
                     var nr_weights = nr_inputs;
                 } else {
-                    var nr_weights = layers[i-1][0];
+                    var nr_weights = layers[i-1].nr_neurons;
                 }
                 for(var weight=0; weight<nr_weights; weight++){
-                    weight_dna.push(Math.random()*2*layers[i][2] - layers[i][2]);
+                    weight_dna.push(Math.random()*2*layers[i].max_weight -
+                        layers[i].max_weight);
                 }
                 // Create mu_s
-                var mu_dna = Math.random()*2*layers[i][3] - layers[i][3];
+                var mu_dna = Math.random()*2*layers[i].max_mu - layers[i].max_mu;
                 // Create sigma_s
-                var sigma_dna = Math.random()*2*layers[i][4] - layers[i][4];
+                var sigma_dna = Math.random()*2*layers[i].max_sigma - layers[i].max_sigma;
                 var neuron_dna = { weights: weight_dna,
                                    mu_s: mu_dna,
                                    sigma_s: sigma_dna };
                 neuronlayer_dna.push(neuron_dna);
             }
-            if(layers[i][1]){
+            if(layers[i].feedbacks){
                 var mud_dna = [];
                 var sigmad_dna = [];
-                for(var j=0; j<layers[i][0]; j++){
-                    mud_dna.push(Math.random()*2*layers[i][3] - layers[i][3]);
-                    sigmad_dna.push(Math.random()*2*layers[i][4] - layers[i][4]);
+                for(var j=0; j<layers[i].nr_neurons; j++){
+                    mud_dna.push(Math.random()*2*layers[i].max_mu - layers[i].max_mu);
+                    sigmad_dna.push(Math.random()*2*layers[i].max_sigma - layers[i].max_sigma);
                 }
                 var feedback_dna = {
                     mu_d_weights: mud_dna,

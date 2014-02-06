@@ -167,7 +167,20 @@ describe('Brain', function(){
 
     describe('Genome', function(){
         it('should randomly generate correct brain dna', function(){
-            var layers = [ [4, true, 5, 5, 5], [10, true, 5, 5, 5] ];
+            var layers = [
+                { nr_neurons: 4,
+                  feedbacks: true,
+                  max_weight: 5,
+                  max_mu: 5,
+                  max_sigma: 5
+                },
+                { nr_neurons: 10,
+                  feedbacks: true,
+                  max_weight: 5,
+                  max_mu: 5,
+                  max_sigma: 5
+                }
+            ];
             var nr_inputs = 3;
             var genome = new brain.Genome();
             genome.random_generation(nr_inputs, layers);

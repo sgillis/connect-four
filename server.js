@@ -82,9 +82,22 @@ var BrainPool = (function(){
     var genomes = [];
     for(var i=0; i<nr_brains; i++){
         genomes[i] = new brain.Genome();
-        genomes[i].random_generation(49, [ [49, true, 5, 5, 5], [7, false, 5, 5, 5] ]);
+        genomes[i].random_generation(49, [
+            { nr_neurons: 49,
+              feedbacks: true,
+              max_weight: 5,
+              max_mu: 5,
+              max_sigma: 5
+            },
+            { nr_neurons: 7,
+              feedbacks: false,
+              max_weight: 5,
+              max_mu: 5,
+              max_sigma: 5
+            }
+        ]);
         brains[i] = new brain.Brain();
-        brains[i].initialize(genomes[i].weights);
+        brains[i].initialize(genomes[i].dna);
     }
 
     var getBrains = function(){
