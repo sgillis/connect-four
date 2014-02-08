@@ -69,13 +69,13 @@ function Brain(){
     // }
     // where neurons and feedback_weights are as defined by
     // NeuronLayer.initialize
-    this.initialize = function(layers){
-        this.genome = layers;
-        for(var i=0; i<layers.length; i++){
+    this.initialize = function(dna){
+        this.genome = dna;
+        for(var i=0; i<dna.layers.length; i++){
             var neuron_layer = new NeuronLayer();
             neuron_layer.initialize(
-                layers[i].neurons,
-                layers[i].feedback_weights);
+                dna.layers[i].neurons,
+                dna.layers[i].feedback_weights);
             this.layers.push(neuron_layer);
         }
     };

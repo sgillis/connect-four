@@ -2,11 +2,8 @@ importScripts('./utils.js')
 importScripts('./brain.js')
 
 onmessage = function(work){ 
-    console.log('First fighter: ' + work.data[0]);
-    console.log('Second fighter: ' + work.data[1]);
-
-    var bot1 = new FighterBot(work.data[0])
-    var bot2 = new FighterBot(work.data[1])
+    var bot1 = new FighterBot(work.data[0].genome)
+    var bot2 = new FighterBot(work.data[1].genome)
     var games = [];
 
     for(var i=0; i<100; i++){
@@ -30,7 +27,6 @@ onmessage = function(work){
 
 function FighterBot(genome){
     this.brain = new brain.Brain();
-    console.log(genome);
     this.brain.initialize(genome);
 
     this.random_move = function(game){
@@ -39,7 +35,6 @@ function FighterBot(genome){
             var spot = availableSpot(Math.floor(Math.random() * 7), 0, game.pieces);
             if(spot[1] > -1){
                 // Make move locally
-                console.log(spot);
                 game.pieces[game.active_player].push(spot);
                 made_move = true;
             }
@@ -53,11 +48,10 @@ function FighterBot(genome){
         var spot = availableSpot(position, 0, game.pieces);
         if(spot[1] > -1){
             // Make move locally
-            console.log(spot);
             game.pieces[game.active_player].push(spot);
         } else {
             // Make random move
-            this.random_move()
+            this.random_move(game)
         }
     }
 }
