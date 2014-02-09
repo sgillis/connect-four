@@ -6,11 +6,11 @@ onmessage = function(work){
     var bot2 = new FighterBot(work.data[1].genome)
     var games = [];
 
-    for(var i=0; i<100; i++){
+    for(var i=0; i<10; i++){
         console.log('New game starting');
         games[i] = new Game();
         while(
-                fourConnected(games[i].pieces[games[i].active_player]) !== true ||
+                fourConnected(games[i].pieces[games[i].active_player]) !== true &&
                 fourConnected(games[i].pieces[(games[i].active_player + 1) % 2]) !== true
         ){
             if(games[i].active_player == 0){
@@ -18,8 +18,8 @@ onmessage = function(work){
             } else {
                 bot2.move(games[i]);
             }
+            games[i].active_player = (games[i].active_player + 1) % 2;
         }
-        setTimeout(function(){}, 500);
     }
 
     postMessage('Done fighting');
