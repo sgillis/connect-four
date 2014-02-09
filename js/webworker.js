@@ -20,6 +20,7 @@ onmessage = function(work){
             }
             games[i].active_player = (games[i].active_player + 1) % 2;
         }
+        print_game(games[i]);
     }
 
     postMessage('Done fighting');
@@ -59,4 +60,25 @@ function FighterBot(genome){
 function Game(){
     this.pieces = [[], []];
     this.active_player = 0;
+}
+
+function print_game(game){
+    for(var j=0; j<7; j++){
+        line = '';
+        for(var i=0; i<7; i++){
+            if(indexOfArr(game.pieces[0], [i, j]) > -1){
+                line += '1 ';
+            } else if(indexOfArr(game.pieces[1], [i, j]) > -1 ){
+                line += '2 ';
+            } else {
+                line += '0 ';
+            }
+        }
+        console.log(line);
+    }
+    if(fourConnected(game.pieces[0])){
+        console.log('bot 1 won');
+    } else {
+        console.log('bot 2 won');
+    }
 }
