@@ -62,7 +62,10 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
     // Webworker
     $scope.start_webworker = function(){
         $log.info('Starting worker');
-        var result = worker.doWork($scope.fighters);
+        var result = worker.doWork({
+            fighters: $scope.fighters,
+            main_fighter: $scope.main_fighter
+        });
         result.then(function(data){
             console.log('Worker replied:', data);
         });
@@ -74,6 +77,7 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
         $scope.game_name = data.game_name;
         $scope.players = data.players;
         $scope.fighters = data.fighters;
+        $scope.main_fighter = data.simulation_count;
     });
 
     socket.on('move', function(data){

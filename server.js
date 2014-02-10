@@ -78,8 +78,9 @@ var gameStates = (function(){
 var BrainPool = (function(){
     var brain = require('./js/brain.js');
     var brains = [];
-    var nr_brains = 10;
+    var nr_brains = 1000;
     var genomes = [];
+    var simulation_count = 0;
     for(var i=0; i<nr_brains; i++){
         genomes[i] = new brain.Genome();
         genomes[i].random_generation(49, [
@@ -104,18 +105,14 @@ var BrainPool = (function(){
         return brains;
     }
 
-    var getFighters = function(){
-        // TODO implement function that will get two bots that have not yet
-        // fought eachother
-        return [brains[0], brains[1]];
-    }
-
     return {
         getBrains: getBrains,
-        getFighters: getFighters
+        getNrBrains: function(){ return nr_brains; },
+        getSimulationCount: function(){ return simulation_count; }
     }
 }());
 
+io.set('log level', 1);
 
 io.sockets.on('connection', function(socket){
     var names = gameStates.getNames();
@@ -125,7 +122,8 @@ io.sockets.on('connection', function(socket){
         name: names.name,
         game_name: names.game.name,
         players: names.game.players,
-        fighters: BrainPool.getFighters()
+        fighters: BrainPool.getBrains(),
+        simulation_count: BrainPool.getSimulationCount()
     });
 
     socket.broadcast.emit('user:join', {

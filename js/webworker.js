@@ -2,45 +2,39 @@ importScripts('./utils.js')
 importScripts('./brain.js')
 
 onmessage = function(work){ 
-    var bot1 = new FighterBot(work.data[0].genome)
-    var bot2 = new FighterBot(work.data[1].genome)
-    var games = [];
-    var nr_games = 10;
-    var wins = {
-        1: 0,
-        2: 0
+    var main_fighter = 0;
+    var bots = [];
+    var wins = [];
+    var fighters = work.data.fighters;
+    var main_fighter = work.data.main_fighter;
+    for(var i=0; i<fighters.length; i++){
+        bots[i] = new FighterBot(fighters[i].genome);
+        wins[i] = 0;
     }
+    var games = [];
 
-    for(var i=0; i<nr_games; i++){
+    for(var i=0; i<fighters.length; i++){
+        if(i==main_fighter) continue;
         games[i] = new Game();
         while(
                 fourConnected(games[i].pieces[games[i].active_player]) !== true &&
                 fourConnected(games[i].pieces[(games[i].active_player + 1) % 2]) !== true
         ){
             if(games[i].active_player == 0){
-                bot1.move(games[i]);
+                bots[main_fighter].move(games[i]);
             } else {
-                bot2.move(games[i]);
+                bots[i].move(games[i]);
             }
             games[i].active_player = (games[i].active_player + 1) % 2;
         }
         if(fourConnected(games[i].pieces[0])){
-            wins[1] += 1;
+            wins[main_fighter] += 1;
         } else {
-            wins[2] += 1;
+            wins[i] += 1;
         }
     }
 
-    postMessage({
-        1: {
-            'fought': nr_games,
-            'won': wins[1]
-        },
-        2: {
-            'fought': nr_games,
-            'won': wins[2]
-        }
-    });
+    postMessage(wins);
 };
 
 function FighterBot(genome){
