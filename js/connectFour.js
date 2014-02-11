@@ -62,13 +62,22 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
     // Webworker
     $scope.start_webworker = function(){
         $log.info('Starting worker');
+        $scope.webworker_status = 1;
         var result = worker.doWork({
             fighters: $scope.fighters,
             main_fighter: $scope.main_fighter
         });
         result.then(function(data){
             console.log('Worker replied:', data);
+            socket.emit('worker:result', {
+                result: data
+            });
         });
+    }
+
+    $scope.stop_webworker = function(){
+        console.log('Stopping webworker');
+        $scope.webworker_status = 0;
     }
 
     // Socket functions
@@ -100,6 +109,23 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
             $scope.players = data.players;
             $scope.reset($scope.game);
             $scope.game.gameMessage = 'New opponent, game on!';
+        }
+    });
+
+    socket.on('worker:new_data', function(data){
+        if($scope.webworker_status){
+            $scope.main_fighter = data.simulation_count;
+            console.log('Starting new worker');
+            var result = worker.doWork({
+                fighters: $scope.fighters,
+                main_fighter: $scope.main_fighter
+            });
+            result.then(function(data){
+                console.log('Worker replied:', data);
+                socket.emit('worker:result', {
+                    result: data
+                });
+            });
         }
     });
 });

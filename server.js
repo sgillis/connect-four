@@ -78,9 +78,10 @@ var gameStates = (function(){
 var BrainPool = (function(){
     var brain = require('./js/brain.js');
     var brains = [];
-    var nr_brains = 1000;
+    var nr_brains = 10;
     var genomes = [];
     var simulation_count = 0;
+    var wins = [];
     for(var i=0; i<nr_brains; i++){
         genomes[i] = new brain.Genome();
         genomes[i].random_generation(49, [
@@ -105,10 +106,42 @@ var BrainPool = (function(){
         return brains;
     }
 
+    var increaseSimulationCount = function(){
+        simulation_count += 1;
+        return simulation_count;
+    }
+
+    var resetSimulationCount = function(){
+        simulation_count = 0;
+        return simulation_count;
+    }
+
+    var processWorkerResult = function(worker_wins){
+        for(var i=0; i<worker_wins.length; i++){
+            x = wins[i] || 0;
+            wins[i] = x + worker_wins[i];
+        }
+        increaseSimulationCount()
+        if(simulation_count==(nr_brains - 1)){
+            resetSimulationCount();
+            resetWins();
+            console.log('reset wins');
+        }
+    }
+
+    var resetWins = function(){
+        console.log(wins);
+        wins = [];
+    }
+
     return {
         getBrains: getBrains,
         getNrBrains: function(){ return nr_brains; },
-        getSimulationCount: function(){ return simulation_count; }
+        getSimulationCount: function(){ return simulation_count; },
+        increaseSimulationCount: increaseSimulationCount,
+        resetSimulationCount: resetSimulationCount,
+        processWorkerResult: processWorkerResult,
+        resetWins: resetWins
     }
 }());
 
@@ -138,6 +171,13 @@ io.sockets.on('connection', function(socket){
 
     socket.on('bot:joined', function(data){
         gameStates.addBot(data.game_name);
+    });
+
+    socket.on('worker:result', function(data){
+        BrainPool.processWorkerResult(data.result);
+        socket.emit('worker:new_data', {
+            simulation_count: BrainPool.getSimulationCount()
+        });
     });
 
     socket.on('disconnect', function(){
