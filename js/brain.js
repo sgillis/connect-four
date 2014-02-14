@@ -3,6 +3,7 @@
     exports.NeuronLayer = NeuronLayer;
     exports.Neuron = Neuron;
     exports.Genome = Genome;
+    exports.add_genomes = add_genomes;
     exports.Sigmoid = Sigmoid;
 })(typeof exports === 'undefined'? this['brain']={} : exports);
 
@@ -276,6 +277,39 @@ function Genome(){
     // This will give us 12 new genomes.
     this.mate = function(p2){
     }
+}
+
+
+// Add two genomes and return the result as a new genome
+function add_genomes(p1, p2){
+    var result = new Genome();
+    for(var i=0; i<p1.dna.layers.length; i++){
+        result.dna.layers[i] = {
+            feedback_weights: undefined,
+            neurons: []
+        };
+        for(var neuron=0; neuron<p1.dna.layers[i].neurons.length; neuron++){
+            var new_neuron = {};
+            new_neuron.mu_s = p1.dna.layers[i].neurons[neuron].mu_s + p2.dna.layers[i].neurons[neuron].mu_s;
+            new_neuron.sigma_s = p1.dna.layers[i].neurons[neuron].sigma_s + p2.dna.layers[i].neurons[neuron].sigma_s;
+            new_neuron.weights = [];
+            for(var j=0; j<p1.dna.layers[i].neurons[neuron].weights.length; j++){
+                new_neuron.weights[j] = p1.dna.layers[i].neurons[neuron].weights[j] + p2.dna.layers[i].neurons[neuron].weights[j];
+            }
+            result.dna.layers[i].neurons[neuron] = new_neuron;
+        }
+        if(p1.dna.layers[i].feedback_weights != undefined){
+            result.dna.layers[i].feedback_weights = {
+                mu_d_weights: [],
+                sigma_d_weights: []
+            }
+            for(var j=0; j<p1.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
+                result.dna.layers[i].feedback_weights.mu_d_weights[j] = p1.dna.layers[i].feedback_weights.mu_d_weights[j] + p2.dna.layers[i].feedback_weights.mu_d_weights[j];
+                result.dna.layers[i].feedback_weights.sigma_d_weights[j] = p1.dna.layers[i].feedback_weights.sigma_d_weights[j] + p2.dna.layers[i].feedback_weights.sigma_d_weights[j];
+            }
+        }
+    }
+    return result
 }
 
 
