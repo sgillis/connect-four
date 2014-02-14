@@ -239,7 +239,45 @@ function Genome(){
         }
         this.dna.layers = brain_dna;
     };
+
+
+    // Compute offspring of two genomes p_1 and p_2. This is done by first
+    // calculating four different crossover genomes from the two original
+    // genomes as follows:
+    //
+    //   os_1 = (p_1 + p_2) / 2
+    //   os_2 = p_max * (1-w) + max(p_1, p_2)*w
+    //   os_3 = p_min * (1-w) + min(p_1, p_2)*w
+    //   os_4 = (p_max + p_min) * (1-w) / 2 + os_1 * w
+    //
+    // where p_max is a genome with all the maximum values for the parameters,
+    // p_min is a genome with all the minimum values for the parameters.
+    // max(p_1, p_2) is a genome where every value is the largest of the
+    // corresponding value in either p_1 or p_2. For example
+    //
+    //   max([1, 2, -3], [5, -3, 1]) = [5, 2, 1]
+    //   min([1, 2, -3], [5, -3, 1]) = [1, -3, -3]
+    //
+    // w is a predefined value with w in [0, 1]
+    //
+    // Once we calculated the crossover offspring, we generate mutations of
+    // the offspring. For every crossover offspring we generate three mutations
+    //
+    //   nos_i = os + b_i * dnos
+    //
+    // where i in [1, 2, 3] and dnos are random numbers that satisfy
+    //
+    //   p_min =< os + dnos =< p_max
+    //
+    // b_1 is an all zero array, except for 1 element that is equal to 1. b_2
+    // contains all zeros and ones that are distributed randomly. b_3 is an
+    // array containing all ones.
+    //
+    // This will give us 12 new genomes.
+    this.mate = function(p2){
+    }
 }
+
 
 function Sigmoid(x, m, s){
     // Calculates the sigmoid function
