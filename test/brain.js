@@ -7,39 +7,41 @@ chai.use(chaistats);
 
 describe('Brain', function(){
     it('should create the required neuron layers', function(){
-        var layers = [
-            {
-                neurons: [
-                    { weights: [1, 2, 3],
-                      mu_s: 30,
-                      sigma_s: 3 },
-                    { weights: [2, 3, 4],
-                      mu_s: 60,
-                      sigma_s: 6 },
-                    { weights: [3, 4, 5],
-                      mu_s: 90,
-                      sigma_s: 5 }
-                ],
-                feedback_weights: undefined
-            },
-            {
-                neurons: [
-                    { weights: [1, 2, 3],
-                      mu_s: 30,
-                      sigma_s: 3 },
-                    { weights: [2, 3, 4],
-                      mu_s: 60,
-                      sigma_s: 6 },
-                    { weights: [3, 4, 5],
-                      mu_s: 90,
-                      sigma_s: 5 }
-                ],
-                feedback_weights: { mu_d_weights: [5.2, 1.2, 7.3],
-                  sigma_d_weights: [6.5, 4.3, 1] }
-            },
-        ];
+        var dna = {
+            layers: [
+                {
+                    neurons: [
+                        { weights: [1, 2, 3],
+                          mu_s: 30,
+                          sigma_s: 3 },
+                        { weights: [2, 3, 4],
+                          mu_s: 60,
+                          sigma_s: 6 },
+                        { weights: [3, 4, 5],
+                          mu_s: 90,
+                          sigma_s: 5 }
+                    ],
+                    feedback_weights: undefined
+                },
+                {
+                    neurons: [
+                        { weights: [1, 2, 3],
+                          mu_s: 30,
+                          sigma_s: 3 },
+                        { weights: [2, 3, 4],
+                          mu_s: 60,
+                          sigma_s: 6 },
+                        { weights: [3, 4, 5],
+                          mu_s: 90,
+                          sigma_s: 5 }
+                    ],
+                    feedback_weights: { mu_d_weights: [5.2, 1.2, 7.3],
+                      sigma_d_weights: [6.5, 4.3, 1] }
+                },
+            ]
+        };
         var neuralnet = new brain.Brain();
-        neuralnet.initialize(layers);
+        neuralnet.initialize(dna);
         assert.equal(neuralnet.layers.length, 2);
         assert.equal(neuralnet.layers[0].feedback_weights, undefined);
         assert.deepEqual(neuralnet.layers[1].feedback_weights,
@@ -51,43 +53,45 @@ describe('Brain', function(){
     });
 
     it('should properly process input', function(){
-         var layers = [
-            {
-                neurons: [
-                    { weights: [1, 2, 3],
-                      mu_s: 15,
-                      sigma_s: 3 },
-                    { weights: [2, 3, 4],
-                      mu_s: 30,
-                      sigma_s: 6 },
-                    { weights: [3, 4, 5],
-                      mu_s: 10,
-                      sigma_s: 5 }
-                ],
-                feedback_weights: undefined
-            },
-            {
-                neurons: [
-                    { weights: [1, 2, 3],
-                      mu_s: 0.2,
-                      sigma_s: 3 },
-                    { weights: [2, 3, 4],
-                      mu_s: -0.1,
-                      sigma_s: 0.2 },
-                    { weights: [3, 4, 5],
-                      mu_s: -0.8,
-                      sigma_s: 0.8 },
-                    { weights: [5, 6, 7],
-                      mu_s: -0.3,
-                      sigma_s: 5 }
-                ],
-                feedback_weights: { 
-                    mu_d_weights: [5.2, 1.2, 7.3, 1.2],
-                    sigma_d_weights: [6.5, 4.3, 1, 2] }
-            }
-        ];
+        var dna = {
+            layers: [
+                {
+                    neurons: [
+                        { weights: [1, 2, 3],
+                          mu_s: 15,
+                          sigma_s: 3 },
+                        { weights: [2, 3, 4],
+                          mu_s: 30,
+                          sigma_s: 6 },
+                        { weights: [3, 4, 5],
+                          mu_s: 10,
+                          sigma_s: 5 }
+                    ],
+                    feedback_weights: undefined
+                },
+                {
+                    neurons: [
+                        { weights: [1, 2, 3],
+                          mu_s: 0.2,
+                          sigma_s: 3 },
+                        { weights: [2, 3, 4],
+                          mu_s: -0.1,
+                          sigma_s: 0.2 },
+                        { weights: [3, 4, 5],
+                          mu_s: -0.8,
+                          sigma_s: 0.8 },
+                        { weights: [5, 6, 7],
+                          mu_s: -0.3,
+                          sigma_s: 5 }
+                    ],
+                    feedback_weights: { 
+                        mu_d_weights: [5.2, 1.2, 7.3, 1.2],
+                        sigma_d_weights: [6.5, 4.3, 1, 2] }
+                }
+            ]
+        };
         var neuralnet = new brain.Brain();
-        neuralnet.initialize(layers);
+        neuralnet.initialize(dna);
         neuralnet.process([1, 2, 3]);
         assert.deepEqual(neuralnet.output, [
             -0.9999999998987087,
