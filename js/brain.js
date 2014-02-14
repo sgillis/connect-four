@@ -4,6 +4,7 @@
     exports.Neuron = Neuron;
     exports.Genome = Genome;
     exports.add_genomes = add_genomes;
+    exports.multiply_genome = multiply_genome;
     exports.Sigmoid = Sigmoid;
 })(typeof exports === 'undefined'? this['brain']={} : exports);
 
@@ -302,14 +303,48 @@ function add_genomes(p1, p2){
             result.dna.layers[i].feedback_weights = {
                 mu_d_weights: [],
                 sigma_d_weights: []
-            }
+            };
             for(var j=0; j<p1.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
                 result.dna.layers[i].feedback_weights.mu_d_weights[j] = p1.dna.layers[i].feedback_weights.mu_d_weights[j] + p2.dna.layers[i].feedback_weights.mu_d_weights[j];
                 result.dna.layers[i].feedback_weights.sigma_d_weights[j] = p1.dna.layers[i].feedback_weights.sigma_d_weights[j] + p2.dna.layers[i].feedback_weights.sigma_d_weights[j];
             }
         }
     }
-    return result
+    return result;
+}
+
+
+// Multiply all weights in a genome p with a constant factor w. Return the
+// result in a new genome
+function multiply_genome(p, w){
+    var result = new Genome();
+    for(var i=0; i<p.dna.layers.length; i++){
+        result.dna.layers[i] = {
+            feedback_weights: undefined,
+            neurons: []
+        };
+        for(var neuron=0; neuron<p.dna.layers[i].neurons.length; neuron++){
+            var new_neuron = {};
+            new_neuron.mu_s = p.dna.layers[i].neurons[neuron].mu_s * w;
+            new_neuron.sigma_s = p.dna.layers[i].neurons[neuron].sigma_s * w;
+            new_neuron.weights = [];
+            for(var j=0; j<p.dna.layers[i].neurons[neuron].weights.length; j++){
+                new_neuron.weights = p.dna.layers[i].neurons[neuron].weights[j] * w;
+            }
+            result.dna.layers[i].neurons[neuron] = new_neuron;
+        }
+        if(p.dna.layers[i].feedback_weights != undefined){
+            result.dna.layers[i].feedback_weights = {
+                mu_d_weights: [],
+                sigma_d_weights: []
+            };
+            for(var j=0; j<p.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
+                result.dna.layers[i].feedback_weights.mu_d_weights[j] = p.dna.layers[i].feedback_weights.mu_d_weights[j] * w;
+                result.dna.layers[i].feedback_weights.sigma_d_weights[j] = p.dna.layers[i].feedback_weights.sigma_d_weights[j] * w;
+            }
+        }
+    }
+    return result;
 }
 
 
