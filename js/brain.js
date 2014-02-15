@@ -371,7 +371,26 @@ function Genome(){
     // array containing all ones.
     //
     // This will give us 12 new genomes.
-    this.mate = function(p2){
+    this.mate = function(p2, pmax, pmin, w){
+        var os1 = add_genomes(this, p2);
+        os1 = multiply_genome(os1, 0.5);
+        var tmp = multiply_genome(pmax, 1-w);
+        var maxp1p2 = max_genome(this, p2);
+        var tmp2 = multiply_genome(maxp1p2, w);
+        var os2 = add_genomes(tmp, tmp2);
+        tmp = multiply_genome(pmin, 1-w);
+        var minp1p2 = min_genome(this, p2);
+        tmp2 = multiply_genome(minp1p2, w);
+        var os3 = add_genomes(tmp, tmp2);
+        var os4 = add_genomes(
+            multiply_genome(add_genomes(pmax, pmin), (1-w)/2),
+            multiply_genome(os1, w));
+        return {
+            os1: os1,
+            os2: os2,
+            os3: os3,
+            os4: os4
+        }
     }
 }
 

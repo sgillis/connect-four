@@ -332,5 +332,44 @@ describe('Brain', function(){
                 result_genome.dna.layers[0].feedback_weights.length);
         });
 
+        it('should be able to mate with another genome', function(){
+            var layers = [
+                { nr_neurons: 4,
+                  feedbacks: true,
+                  max_weight: 6.0,
+                  max_mu: 4.0,
+                  max_sigma: 10.0
+                },
+                { nr_neurons: 10,
+                  feedbacks: true,
+                  max_weight: 6.0,
+                  max_mu: 4.0,
+                  max_sigma: 10.0
+                }
+            ];
+            var nr_inputs = 3;
+            var w = 0.3;
+            var g1 = new brain.Genome();
+            var g2 = new brain.Genome();
+            var gmax = new brain.Genome();
+            var gmin = new brain.Genome();
+            g1.random_generation(nr_inputs, layers);
+            g2.random_generation(nr_inputs, layers);
+            gmax.max_generation(nr_inputs, layers);
+            gmin.min_generation(nr_inputs, layers);
+            offspring = g1.mate(g2, gmax, gmin, w);
+            assert.equal(g1.dna.layers[0].neurons[0].weights[0] / 2 +
+                g2.dna.layers[0].neurons[0].weights[0] / 2,
+                offspring.os1.dna.layers[0].neurons[0].weights[0]);
+            assert.equal(gmax.dna.layers[0].neurons[0].weights[0] * (1-w) +
+                Math.max(g1.dna.layers[0].neurons[0].weights[0], g2.dna.layers[0].neurons[0].weights[0]) * w,
+                offspring.os2.dna.layers[0].neurons[0].weights[0]);
+            assert.equal(gmin.dna.layers[0].neurons[0].weights[0] * (1-w) +
+                Math.min(g1.dna.layers[0].neurons[0].weights[0], g2.dna.layers[0].neurons[0].weights[0]) * w,
+                offspring.os3.dna.layers[0].neurons[0].weights[0]);
+            assert.equal((gmax.dna.layers[0].neurons[0].weights[0] + gmin.dna.layers[0].neurons[0].weights[0]) * (1-w) +
+                offspring.os1.dna.layers[0].neurons[0].weights[0] * w,
+                offspring.os4.dna.layers[0].neurons[0].weights[0]);
+        });
     });
 });
