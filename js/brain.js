@@ -392,6 +392,55 @@ function Genome(){
             os4: os4
         }
     }
+
+    // Mutate a genome as described in the doc of the mate function
+    this.mutate = function(pmax, pmin){
+        var mutation1 = new Genome(),
+            mutation2 = new Genome(),
+            mutation3 = new Genome();
+    }
+
+    // Create a dnos genome that is used in mutate
+    this.dnos = function(pmax, pmin){
+        var dnos = new Genome();
+        for(var i=0; i<this.dna.layers.length; i++){
+            dnos.dna.layers[i] = {
+                feedback_weights: undefined,
+                neurons: []
+            };
+            for(var neuron=0; neuron<this.dna.layers[i].neurons.length; neuron++){
+                var new_neuron = {};
+                new_neuron.mu_s = utils.randInRange(
+                    pmin.dna.layers[i].neurons[neuron].mu_s - this.dna.layers[i].neurons[neuron].mu_s,
+                    pmax.dna.layers[i].neurons[neuron].mu_s - this.dna.layers[i].neurons[neuron].mu_s);
+                new_neuron.sigma_s = utils.randInRange(
+                    pmin.dna.layers[i].neurons[neuron].sigma_s - this.dna.layers[i].neurons[neuron].sigma_s,
+                    pmax.dna.layers[i].neurons[neuron].sigma_s - this.dna.layers[i].neurons[neuron].sigma_s);
+                new_neuron.weights = []
+                for(var j=0; j<this.dna.layers[i].neurons[neuron].weights.length; j++){
+                    new_neuron.weights[j] = utils.randInRange(
+                        pmin.dna.layers[i].neurons[neuron].weights[j] - this.dna.layers[i].neurons[neuron].weights[j],
+                        pmax.dna.layers[i].neurons[neuron].weights[j] - this.dna.layers[i].neurons[neuron].weights[j]);
+                }
+                dnos.dna.layers[i].neurons[neuron] = new_neuron;
+            }
+            if(this.dna.layers[i].feedback_weights != undefined){
+                dnos.dna.layers[i].feedback_weights = {
+                    mu_d_weights: [],
+                    sigma_d_weights: []
+                };
+                for(var j=0; j<this.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
+                    dnos.dna.layers[i].feedback_weights.mu_d_weights[j] = utils.randInRange(
+                        pmin.dna.layers[i].feedback_weights.mu_d_weights[j] - this.dna.layers[i].feedback_weights.mu_d_weights[j],
+                        pmax.dna.layers[i].feedback_weights.mu_d_weights[j] - this.dna.layers[i].feedback_weights.mu_d_weights[j]);
+                    dnos.dna.layers[i].feedback_weights.sigma_d_weights[j] = utils.randInRange(
+                        pmin.dna.layers[i].feedback_weights.sigma_d_weights[j] - this.dna.layers[i].feedback_weights.sigma_d_weights[j],
+                        pmax.dna.layers[i].feedback_weights.sigma_d_weights[j] - this.dna.layers[i].feedback_weights.sigma_d_weights[j]);
+                }
+            }
+        }
+        return dnos;
+    }
 }
 
 

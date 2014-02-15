@@ -371,5 +371,45 @@ describe('Brain', function(){
                 offspring.os1.dna.layers[0].neurons[0].weights[0] * w,
                 offspring.os4.dna.layers[0].neurons[0].weights[0]);
         });
+
+        it('should have a dnos generating function', function(){
+             var layers = [
+                { nr_neurons: 4,
+                  feedbacks: true,
+                  max_weight: 6.0,
+                  max_mu: 4.0,
+                  max_sigma: 10.0
+                },
+                { nr_neurons: 10,
+                  feedbacks: true,
+                  max_weight: 6.0,
+                  max_mu: 4.0,
+                  max_sigma: 10.0
+                }
+            ];
+            var nr_inputs = 3;
+            var g = new brain.Genome();
+            var gmax = new brain.Genome();
+            var gmin = new brain.Genome();
+            g.random_generation(nr_inputs, layers);
+            gmax.max_generation(nr_inputs, layers);
+            gmin.min_generation(nr_inputs, layers);
+            var dnos = g.dnos(gmax, gmin);
+            assert.isTrue(gmin.dna.layers[0].neurons[0].weights[0] <=
+                g.dna.layers[0].neurons[0].weights[0] + dnos.dna.layers[0].neurons[0].weights[0] <=
+                gmax.dna.layers[0].neurons[0].weights[0])
+            assert.isTrue(gmin.dna.layers[0].neurons[0].mu_s <=
+                g.dna.layers[0].neurons[0].mu_s + dnos.dna.layers[0].neurons[0].mu_s <=
+                gmax.dna.layers[0].neurons[0].mu_s)
+            assert.isTrue(gmin.dna.layers[0].neurons[0].sigma_s <=
+                g.dna.layers[0].neurons[0].sigma_s + dnos.dna.layers[0].neurons[0].sigma_s <=
+                gmax.dna.layers[0].neurons[0].sigma_s)
+            assert.isTrue(gmin.dna.layers[0].feedback_weights.mu_d_weights[0] <=
+                g.dna.layers[0].feedback_weights.mu_d_weights[0] + dnos.dna.layers[0].feedback_weights.mu_d_weights[0] <=
+                gmax.dna.layers[0].feedback_weights.mu_d_weights[0])
+            assert.isTrue(gmin.dna.layers[0].feedback_weights.sigma_d_weights[0] <=
+                g.dna.layers[0].feedback_weights.sigma_d_weights[0] + dnos.dna.layers[0].feedback_weights.sigma_d_weights[0] <=
+                gmax.dna.layers[0].feedback_weights.sigma_d_weights[0])
+        });
     });
 });
