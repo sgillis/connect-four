@@ -398,6 +398,123 @@ function Genome(){
         var mutation1 = new Genome(),
             mutation2 = new Genome(),
             mutation3 = new Genome();
+        // Create a dnos for mutation1
+        var dnos = this.dnos(pmax, pmin);
+        // Copy this in mutation1, after that we will randomly change one weight
+        for(var i=0; i<this.dna.layers.length; i++){
+            mutation1.dna.layers[i] = {
+                feedback_weights: undefined,
+                neurons: []
+            };
+            for(var neuron=0; neuron<this.dna.layers[i].neurons.length; neuron++){
+                var new_neuron = {};
+                new_neuron.mu_s = this.dna.layers[i].neurons[neuron].mu_s
+                new_neuron.sigma_s = this.dna.layers[i].neurons[neuron].sigma_s
+                new_neuron.weights = []
+                for(var j=0; j<this.dna.layers[i].neurons[neuron].weights.length; j++){
+                    new_neuron.weights[j] = this.dna.layers[i].neurons[neuron].weights[j]
+                }
+                mutation1.dna.layers[i].neurons[neuron] = new_neuron;
+            }
+            if(this.dna.layers[i].feedback_weights != undefined){
+                mutation1.dna.layers[i].feedback_weights = {
+                    mu_d_weights: [],
+                    sigma_d_weights: []
+                };
+                for(var j=0; j<this.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
+                    mutation1.dna.layers[i].feedback_weights.mu_d_weights[j] = this.dna.layers[i].feedback_weights.mu_d_weights[j]
+                    mutation1.dna.layers[i].feedback_weights.sigma_d_weights[j] = this.dna.layers[i].feedback_weights.sigma_d_weights[j]
+                }
+            }
+        }
+        // Choose a random layer, neuron or feedback_weight (and index of
+        // weight if required) to change
+        var rand_layer = Math.floor(utils.randInRange(0, this.dna.layers.length));
+        // Neuron is 0, feedback is 1
+        if(this.dna.layers[rand_layer].feedback_weights != undefined){
+            var neuron_or_feedback = Math.floor(utils.randInRange(0, 2));
+        } else {
+            var neuron_or_feedback = 0;
+        }
+        if(neuron_or_feedback == 0){
+            var neuron = Math.floor(utils.randInRange(0, this.dna.layers[rand_layer].neurons.length));
+            // weights = 0, mu_s = 1, sigma_s = 2
+            var wms = Math.floor(utils.randInRange(0, 3));
+            if(wms == 0){
+                var index = Math.floor(utils.randInRange(0, this.dna.layers[rand_layer].neurons[neuron].weights.length));
+                mutation1.dna.layers[rand_layer].neurons[neuron].weights[index] =
+                    this.dna.layers[rand_layer].neurons[neuron].weights[index] +
+                    dnos.dna.layers[rand_layer].neurons[neuron].weights[index];
+            } else if(wms==1) {
+                mutation1.dna.layers[rand_layer].neurons[neuron].mu_s =
+                    this.dna.layers[rand_layer].neurons[neuron].mu_s +
+                    dnos.dna.layers[rand_layer].neurons[neuron].mu_s;
+            } else {
+                mutation1.dna.layers[rand_layer].neurons[neuron].mu_s =
+                    this.dna.layers[rand_layer].neurons[neuron].mu_s +
+                    dnos.dna.layers[rand_layer].neurons[neuron].mu_s;
+            }
+        } else {
+            // mu_d_weights = 0, sigma_d_weights = 1
+            var ms = Math.floor(utils.randInRange(0, 2));
+            if(ms == 0){
+                var index = Math.floor(utils.randInRange(0, this.dna.layers[rand_layer].feedback_weights.mu_d_weights.length));
+                mutation1.dna.layers[rand_layer].feedback_weights.mu_d_weights[index] =
+                    this.dna.layers[rand_layer].feedback_weights.mu_d_weights[index] +
+                    dnos.dna.layers[rand_layer].feedback_weights.mu_d_weights[index];
+            } else {
+                var index = Math.floor(utils.randInRange(0, this.dna.layers[rand_layer].feedback_weights.sigma_d_weights.length));
+                mutation1.dna.layers[rand_layer].feedback_weights.sigma_d_weights[index] =
+                    this.dna.layers[rand_layer].feedback_weights.sigma_d_weights[index] +
+                    dnos.dna.layers[rand_layer].feedback_weights.sigma_d_weights[index];
+            }
+        }
+
+        // Second mutation. For every weight, flip a coin and add dnos to this
+        // depending on coin flip.
+        var dnos = this.dnos(pmax, pmin);
+        for(var i=0; i<this.dna.layers.length; i++){
+            mutation2.dna.layers[i] = {
+                feedback_weights: undefined,
+                neurons: []
+            };
+            for(var neuron=0; neuron<this.dna.layers[i].neurons.length; neuron++){
+                var new_neuron = {};
+                new_neuron.mu_s = this.dna.layers[i].neurons[neuron].mu_s +
+                    (Math.floor(utils.randInRange(0, 2)) * dnos.dna.layers[i].neurons[neuron].mu_s);
+                new_neuron.sigma_s = this.dna.layers[i].neurons[neuron].sigma_s +
+                    (Math.floor(utils.randInRange(0, 2)) * dnos.dna.layers[i].neurons[neuron].sigma_s);
+                new_neuron.weights = []
+                for(var j=0; j<this.dna.layers[i].neurons[neuron].weights.length; j++){
+                    new_neuron.weights[j] = this.dna.layers[i].neurons[neuron].weights[j] +
+                        (Math.floor(utils.randInRange(0, 2)) * dnos.dna.layers[i].neurons[neuron].weights[j]);
+                }
+                mutation2.dna.layers[i].neurons[neuron] = new_neuron;
+            }
+            if(this.dna.layers[i].feedback_weights != undefined){
+                mutation2.dna.layers[i].feedback_weights = {
+                    mu_d_weights: [],
+                    sigma_d_weights: []
+                };
+                for(var j=0; j<this.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
+                    mutation2.dna.layers[i].feedback_weights.mu_d_weights[j] =
+                        this.dna.layers[i].feedback_weights.mu_d_weights[j] +
+                        (Math.floor(utils.randInRange(0, 2)) * dnos.dna.layers[i].feedback_weights.mu_d_weights[j]);
+                    mutation2.dna.layers[i].feedback_weights.sigma_d_weights[j] =
+                        this.dna.layers[i].feedback_weights.sigma_d_weights[j] +
+                        (Math.floor(utils.randInRange(0, 2)) * dnos.dna.layers[i].feedback_weights.sigma_d_weights[j]);
+                }
+            }
+        }
+
+
+        // Third mutation is just the sum of this and dnos
+        mutation3 = add_genomes(this, this.dnos(pmax, pmin));
+        return {
+            mutation1: mutation1,
+            mutation2: mutation2,
+            mutation3: mutation3
+        }
     }
 
     // Create a dnos genome that is used in mutate

@@ -411,5 +411,33 @@ describe('Brain', function(){
                 g.dna.layers[0].feedback_weights.sigma_d_weights[0] + dnos.dna.layers[0].feedback_weights.sigma_d_weights[0] <=
                 gmax.dna.layers[0].feedback_weights.sigma_d_weights[0])
         });
+
+        it('should mutate into three different strands', function(){
+              var layers = [
+                { nr_neurons: 4,
+                  feedbacks: true,
+                  max_weight: 6.0,
+                  max_mu: 4.0,
+                  max_sigma: 10.0
+                },
+                { nr_neurons: 10,
+                  feedbacks: true,
+                  max_weight: 6.0,
+                  max_mu: 4.0,
+                  max_sigma: 10.0
+                }
+            ];
+            var nr_inputs = 3;
+            var g = new brain.Genome();
+            var gmax = new brain.Genome();
+            var gmin = new brain.Genome();
+            g.random_generation(nr_inputs, layers);
+            gmax.max_generation(nr_inputs, layers);
+            gmin.min_generation(nr_inputs, layers);
+            var mutations = g.mutate(gmax, gmin);
+            assert.property(mutations, 'mutation1');
+            assert.property(mutations, 'mutation2');
+            assert.property(mutations, 'mutation3');
+        });
     });
 });
