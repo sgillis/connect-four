@@ -78,27 +78,33 @@ var gameStates = (function(){
 var BrainPool = (function(){
     var brain = require('./js/brain.js');
     var brains = [];
-    var nr_brains = 10;
+    var nr_brains = 20; // Should be at least more than 16
     var genomes = [];
     var simulation_count = 0;
     var wins = [];
     var fitness = [];
+    var nr_inputs = 49;
+    var layers = [
+        { nr_neurons: 49,
+          feedbacks: true,
+          max_weight: 5,
+          max_mu: 5,
+          max_sigma: 5
+        },
+        { nr_neurons: 7,
+          feedbacks: false,
+          max_weight: 5,
+          max_mu: 5,
+          max_sigma: 5
+        }
+    ];
+    var gmax = new brain.Genome();
+    var gmin = new brain.Genome();
+    gmax.max_generation(nr_inputs, layers);
+    gmin.min_generation(nr_inputs, layers);
     for(var i=0; i<nr_brains; i++){
         genomes[i] = new brain.Genome();
-        genomes[i].random_generation(49, [
-            { nr_neurons: 49,
-              feedbacks: true,
-              max_weight: 5,
-              max_mu: 5,
-              max_sigma: 5
-            },
-            { nr_neurons: 7,
-              feedbacks: false,
-              max_weight: 5,
-              max_mu: 5,
-              max_sigma: 5
-            }
-        ]);
+        genomes[i].random_generation(nr_inputs, layers);
         brains[i] = new brain.Brain();
         brains[i].initialize(genomes[i].dna);
     }
@@ -116,7 +122,6 @@ var BrainPool = (function(){
                 index = i;
             }
         }
-        console.log('returning brain ' + index);
         return brains[index];
     }
 
@@ -143,18 +148,96 @@ var BrainPool = (function(){
     }
 
     var resetWins = function(){
-        console.log(wins);
         wins = [];
     }
 
-    var replaceWorstBrain = function(){
-        var min_nr_wins = Math.exp(nr_brains, 2),
-            index = -1;
+    var sortFitnessWorstToBest = function(){
+        // Returns an array of indices. The first index will be the brain with
+        // the worst fitness score, the second the brain with the second worst
+        // fitness etc.
+        var result = [];
         for(var i=0; i<wins.length; i++){
-            if(wins[i]<min_nr_wins){
-                min_nr_wins = wins[i];
-                index = i;
+            if(wins[result[0]]>wins[i]){
+                result.splice(0, 0, i);
+                continue;
             }
+            for(var j=0; j<result.length - 1; j++){
+                if(wins[result[j]] < wins[i]){
+                    if(wins[i] <= wins[result[j+1]]){
+                        result.splice(j+1, 0, i);
+                        break;
+                    }
+                }
+            }
+            if(result.length==i){
+                result.push(i);
+            }
+        }
+        return result;
+    }
+
+    var replaceWorstBrain = function(){
+        var brainOrder = sortFitnessWorstToBest();
+        // Generate some new brains. To do this we choose two brains by first
+        // choosing a random number r in [0, 1]. Then we choose the bot[i] for
+        // which sum_fitness[i-1] < r < sum_fitness[i]. sum_fitness[i] is the
+        // sum of all fitness values for index lower than i, thus
+        //   
+        //   sum_fitness[2] = fitness[0] + fitness[1] + fitness[2]
+        //
+        // and sum_fitness[-1] = 0. We do the same for finding the second
+        // brain, except that it cannot be the same as the first brain.
+        var r = Math.random(),
+            index1 = -1,
+            sum_fitness = 0;
+        for(var i=0; i<fitness.length; i++){
+            if(sum_fitness < r < (sum_fitness + fitness[i])){
+                index1 = i;
+                break;
+            } else {
+                sum_fitness += fitness[i];
+            }
+        }
+        // Find second brain
+        var index2 = -1;
+        while(index2 == -1){
+            r = Math.random();
+            sum_fitness = 0;
+            for(var i=0; i<fitness.length; i++){
+                if(sum_fitness < r < (sum_fitness + fitness[i])){
+                    if(i != index1){
+                        index2 = i;
+                        break;
+                    }
+                } else {
+                    sum_fitness += fitness[i];
+                }
+            }
+        }
+        // Create some offspring
+        var offspring = genomes[index1].mate(genomes[index2], gmax, gmin);
+        var offspring_array = [
+            offspring.os1,
+            offspring.os2,
+            offspring.os3,
+            offspring.os4,
+            offspring.nos11,
+            offspring.nos12,
+            offspring.nos13,
+            offspring.nos21,
+            offspring.nos22,
+            offspring.nos23,
+            offspring.nos31,
+            offspring.nos32,
+            offspring.nos33,
+            offspring.nos41,
+            offspring.nos42,
+            offspring.nos43
+        ];
+        for(var i=0; i<16; i++){
+            genomes[brainOrder[i]] = offspring_array[i];
+            brains[i] = new brain.Brain();
+            brains[i].initialize(genomes[i].dna);
         }
     }
 

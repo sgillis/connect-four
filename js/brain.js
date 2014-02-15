@@ -385,11 +385,27 @@ function Genome(){
         var os4 = add_genomes(
             multiply_genome(add_genomes(pmax, pmin), (1-w)/2),
             multiply_genome(os1, w));
+        nos1 = os1.mutate(pmax, pmin);
+        nos2 = os2.mutate(pmax, pmin);
+        nos3 = os3.mutate(pmax, pmin);
+        nos4 = os4.mutate(pmax, pmin);
         return {
             os1: os1,
             os2: os2,
             os3: os3,
-            os4: os4
+            os4: os4,
+            nos11: nos1.mutation1,
+            nos12: nos1.mutation2,
+            nos13: nos1.mutation3,
+            nos21: nos2.mutation1,
+            nos22: nos2.mutation2,
+            nos23: nos2.mutation3,
+            nos31: nos3.mutation1,
+            nos32: nos3.mutation2,
+            nos33: nos3.mutation3,
+            nos41: nos4.mutation1,
+            nos42: nos4.mutation2,
+            nos43: nos4.mutation3,
         }
     }
 
