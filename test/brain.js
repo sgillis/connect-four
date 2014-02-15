@@ -283,8 +283,6 @@ describe('Brain', function(){
             genome1.random_generation(nr_inputs, layers);
             genome2.random_generation(nr_inputs, layers);
             result_genome = brain.max_genome(genome1, genome2);
-            console.log(genome1.dna.layers[0].neurons[0].weights[0]);
-            console.log(genome2.dna.layers[0].neurons[0].weights[0]);
             assert.equal(
                 Math.max(genome1.dna.layers[0].neurons[0].weights[0],
                     genome2.dna.layers[0].neurons[0].weights[0]),
@@ -296,5 +294,39 @@ describe('Brain', function(){
             assert.equal(genome1.dna.layers[0].feedback_weights.length,
                 result_genome.dna.layers[0].feedback_weights.length);
         });
+
+        it('should be able to take the min of two genomes', function(){
+             var layers = [
+                { nr_neurons: 4,
+                  feedbacks: true,
+                  max_weight: 5,
+                  max_mu: 5,
+                  max_sigma: 5
+                },
+                { nr_neurons: 10,
+                  feedbacks: true,
+                  max_weight: 5,
+                  max_mu: 5,
+                  max_sigma: 5
+                }
+            ];
+            var nr_inputs = 3;
+            var genome1 = new brain.Genome();
+            var genome2 = new brain.Genome();
+            genome1.random_generation(nr_inputs, layers);
+            genome2.random_generation(nr_inputs, layers);
+            result_genome = brain.min_genome(genome1, genome2);
+            assert.equal(
+                Math.min(genome1.dna.layers[0].neurons[0].weights[0],
+                    genome2.dna.layers[0].neurons[0].weights[0]),
+                result_genome.dna.layers[0].neurons[0].weights[0])
+            assert.equal(genome1.dna.layers.length,
+                result_genome.dna.layers.length);
+            assert.equal(genome1.dna.layers[0].neurons.length,
+                result_genome.dna.layers[0].neurons.length);
+            assert.equal(genome1.dna.layers[0].feedback_weights.length,
+                result_genome.dna.layers[0].feedback_weights.length);
+        });
+
     });
 });

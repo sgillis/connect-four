@@ -6,6 +6,7 @@
     exports.add_genomes = add_genomes;
     exports.multiply_genome = multiply_genome;
     exports.max_genome = max_genome;
+    exports.min_genome = min_genome;
     exports.Sigmoid = Sigmoid;
 })(typeof exports === 'undefined'? this['brain']={} : exports);
 
@@ -378,6 +379,42 @@ function max_genome(p1, p2){
             for(var j=0; j<p1.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
                 result.dna.layers[i].feedback_weights.mu_d_weights[j] = Math.max(p1.dna.layers[i].feedback_weights.mu_d_weights[j], p2.dna.layers[i].feedback_weights.mu_d_weights[j]);
                 result.dna.layers[i].feedback_weights.sigma_d_weights[j] = Math.max(p1.dna.layers[i].feedback_weights.sigma_d_weights[j], p2.dna.layers[i].feedback_weights.sigma_d_weights[j]);
+            }
+        }
+    }
+    return result;
+}
+
+
+// min(p_1, p_2) returns a genome with the max value in p_1 or p_2 for every
+// weight. E.g.:
+//
+//   max([1, 5, -3], [2, -1, 6]) = [1, -1, -3]
+function min_genome(p1, p2){
+    var result = new Genome();
+    for(var i=0; i<p1.dna.layers.length; i++){
+        result.dna.layers[i] = {
+            feedback_weights: undefined,
+            neurons: []
+        };
+        for(var neuron=0; neuron<p1.dna.layers[i].neurons.length; neuron++){
+            var new_neuron = {};
+            new_neuron.mu_s = Math.min(p1.dna.layers[i].neurons[neuron].mu_s, p2.dna.layers[i].neurons[neuron].mu_s);
+            new_neuron.sigma_s = Math.min(p1.dna.layers[i].neurons[neuron].sigma_s, p2.dna.layers[i].neurons[neuron].sigma_s);
+            new_neuron.weights = [];
+            for(var j=0; j<p1.dna.layers[i].neurons[neuron].weights.length; j++){
+                new_neuron.weights[j] = Math.min(p1.dna.layers[i].neurons[neuron].weights[j], p2.dna.layers[i].neurons[neuron].weights[j]);
+            }
+            result.dna.layers[i].neurons[neuron] = new_neuron;
+        }
+        if(p1.dna.layers[i].feedback_weights != undefined){
+            result.dna.layers[i].feedback_weights = {
+                mu_d_weights: [],
+                sigma_d_weights: []
+            };
+            for(var j=0; j<p1.dna.layers[i].feedback_weights.mu_d_weights.length; j++){
+                result.dna.layers[i].feedback_weights.mu_d_weights[j] = Math.min(p1.dna.layers[i].feedback_weights.mu_d_weights[j], p2.dna.layers[i].feedback_weights.mu_d_weights[j]);
+                result.dna.layers[i].feedback_weights.sigma_d_weights[j] = Math.min(p1.dna.layers[i].feedback_weights.sigma_d_weights[j], p2.dna.layers[i].feedback_weights.sigma_d_weights[j]);
             }
         }
     }
