@@ -228,6 +228,8 @@ describe('Brain', function(){
                 result_genome.dna.layers.length);
             assert.equal(genome1.dna.layers[0].neurons.length,
                 result_genome.dna.layers[0].neurons.length);
+            assert.equal(genome1.dna.layers[0].neurons[0].weights.length,
+                result_genome.dna.layers[0].neurons[0].weights.length)
             assert.equal(genome1.dna.layers[0].feedback_weights.length,
                 result_genome.dna.layers[0].feedback_weights.length);
         });
@@ -258,6 +260,8 @@ describe('Brain', function(){
                 result_genome.dna.layers.length);
             assert.equal(genome.dna.layers[0].neurons.length,
                 result_genome.dna.layers[0].neurons.length);
+            assert.equal(genome.dna.layers[0].neurons[0].weights.length,
+                result_genome.dna.layers[0].neurons[0].weights.length)
             assert.equal(genome.dna.layers[0].feedback_weights.length,
                 result_genome.dna.layers[0].feedback_weights.length);
         });

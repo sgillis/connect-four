@@ -424,7 +424,7 @@ function multiply_genome(p, w){
             new_neuron.sigma_s = p.dna.layers[i].neurons[neuron].sigma_s * w;
             new_neuron.weights = [];
             for(var j=0; j<p.dna.layers[i].neurons[neuron].weights.length; j++){
-                new_neuron.weights = p.dna.layers[i].neurons[neuron].weights[j] * w;
+                new_neuron.weights[j] = p.dna.layers[i].neurons[neuron].weights[j] * w;
             }
             result.dna.layers[i].neurons[neuron] = new_neuron;
         }
