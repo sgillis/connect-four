@@ -1,5 +1,6 @@
 (function(exports){
     exports.construct = construct;
+    exports.randInRange = randInRange;
 })(typeof exports === 'undefined'? this['utils']={} : exports);
 
 function availableSpot(x, y, pieces){
@@ -136,4 +137,9 @@ function construct(constructor, args) {
     }
     F.prototype = constructor.prototype;
     return new F();
+}
+
+// Get a random number in range [min, max]
+function randInRange(min, max) {
+    return Math.random() * (max - min) + min;
 }
