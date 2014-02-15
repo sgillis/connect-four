@@ -82,6 +82,7 @@ var BrainPool = (function(){
     var genomes = [];
     var simulation_count = 0;
     var wins = [];
+    var fitness = [];
     for(var i=0; i<nr_brains; i++){
         genomes[i] = new brain.Genome();
         genomes[i].random_generation(49, [
@@ -106,6 +107,19 @@ var BrainPool = (function(){
         return brains;
     }
 
+    var getBestBrain = function(){
+        var best_fitness = 0,
+            index = 0;
+        for(var i=0; i<fitness.length; i++){
+            if(fitness[i]>best_fitness){
+                best_fitness = fitness[i];
+                index = i;
+            }
+        }
+        console.log('returning brain ' + index);
+        return brains[index];
+    }
+
     var increaseSimulationCount = function(){
         simulation_count += 1;
         return simulation_count;
@@ -123,9 +137,8 @@ var BrainPool = (function(){
         }
         increaseSimulationCount()
         if(simulation_count==(nr_brains - 1)){
-            resetSimulationCount();
-            resetWins();
-            console.log('reset wins');
+            console.log('generation complete');
+            generationComplete();
         }
     }
 
@@ -134,14 +147,40 @@ var BrainPool = (function(){
         wins = [];
     }
 
+    var replaceWorstBrain = function(){
+        var min_nr_wins = Math.exp(nr_brains, 2),
+            index = -1;
+        for(var i=0; i<wins.length; i++){
+            if(wins[i]<min_nr_wins){
+                min_nr_wins = wins[i];
+                index = i;
+            }
+        }
+    }
+
+    var calculateFitness = function(){
+        var total = 0;
+        for(var i=0; i<wins.length; i++){
+            total += wins[i];
+        }
+        for(var i=0; i<wins.length; i++){
+            fitness[i] = wins[i]/total;
+        }
+    }
+
+    var generationComplete = function(){
+        calculateFitness();
+        replaceWorstBrain();
+        resetSimulationCount();
+        resetWins();
+    }
+
     return {
         getBrains: getBrains,
+        getBestBrain: getBestBrain,
         getNrBrains: function(){ return nr_brains; },
         getSimulationCount: function(){ return simulation_count; },
-        increaseSimulationCount: increaseSimulationCount,
-        resetSimulationCount: resetSimulationCount,
-        processWorkerResult: processWorkerResult,
-        resetWins: resetWins
+        processWorkerResult: processWorkerResult
     }
 }());
 
@@ -186,6 +225,13 @@ io.sockets.on('connection', function(socket){
             name: names.name,
             game_name: names.game.name,
             players: gameStates.getGamePlayers(names.game.name)
+        });
+    });
+
+    socket.on('request:bot', function(){
+        brain = BrainPool.getBestBrain()
+        socket.emit('receive:bot', {
+            brain: brain
         });
     });
 });

@@ -54,8 +54,7 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
 
     $scope.create_bot = function(){
         if($scope.players.length < 2){
-            $scope.bot = new Bot($scope, $log, socket);
-            $scope.players.push( ($scope.name + 1) % 2 );
+            socket.emit('request:bot');
         }
     }
 
@@ -128,6 +127,11 @@ connectFour.controller('GameCtrl', function GameCtrl($scope, $log, socket, worke
             });
         }
     });
+
+    socket.on('receive:bot', function(data){
+        $scope.bot = new Bot($scope, $log, socket, data.brain.genome);
+        $scope.players.push( ($scope.name + 1) % 2 );
+    });
 });
 
 function Game(){
@@ -137,16 +141,14 @@ function Game(){
     this.gameMessage = "Welcome to 'Connectfour'!";
 }
 
-function Bot($scope, $log, socket){
+function Bot($scope, $log, socket, genome){
     // Let the server know a bot-overlord is born
     socket.emit('bot:joined', {
         game_name: $scope.game_name,
     });
 
-    this.genome = new brain.Genome();
-    this.genome.random_generation(49, [ [49, true, 5, 5, 5], [7, false, 5, 5, 5] ]);
     this.brain = new brain.Brain();
-    this.brain.initialize(this.genome.weights);
+    this.brain.initialize(genome);
 
     this.random_move = function(){
         $log.info('bot making move');
