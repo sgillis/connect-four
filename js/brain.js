@@ -244,6 +244,99 @@ function Genome(){
         this.dna.layers = brain_dna;
     };
 
+    // Create a genome with the max values for all weights. The input is the
+    // same as for random_generation
+    this.max_generation = function(nr_inputs, layers){
+        var brain_dna = [];
+        for(var i=0; i<layers.length; i++){
+            var neuronlayer_dna = [];
+            for(var neuron=0; neuron<layers[i].nr_neurons; neuron++){
+                // Create weights
+                var weight_dna = [];
+                if(i == 0){
+                    var nr_weights = nr_inputs;
+                } else {
+                    var nr_weights = layers[i-1].nr_neurons;
+                }
+                for(var weight=0; weight<nr_weights; weight++){
+                    weight_dna.push(layers[i].max_weight);
+                }
+                // Create mu_s
+                var mu_dna = layers[i].max_mu;
+                // Create sigma_s
+                var sigma_dna = layers[i].max_sigma;
+                var neuron_dna = { weights: weight_dna,
+                                   mu_s: mu_dna,
+                                   sigma_s: sigma_dna };
+                neuronlayer_dna.push(neuron_dna);
+            }
+            if(layers[i].feedbacks){
+                var mud_dna = [];
+                var sigmad_dna = [];
+                for(var j=0; j<layers[i].nr_neurons; j++){
+                    mud_dna.push(layers[i].max_mu);
+                    sigmad_dna.push(layers[i].max_sigma);
+                }
+                var feedback_dna = {
+                    mu_d_weights: mud_dna,
+                    sigma_d_weights: sigmad_dna
+                };
+            } else {
+                var feedback_dna = undefined
+            }
+            brain_dna.push({
+                neurons: neuronlayer_dna,
+                feedback_weights: feedback_dna });
+        }
+        this.dna.layers = brain_dna;
+    }
+
+    // Create a genome with the min values for all weights. The input is the
+    // same as for random_generation
+    this.min_generation = function(nr_inputs, layers){
+        var brain_dna = [];
+        for(var i=0; i<layers.length; i++){
+            var neuronlayer_dna = [];
+            for(var neuron=0; neuron<layers[i].nr_neurons; neuron++){
+                // Create weights
+                var weight_dna = [];
+                if(i == 0){
+                    var nr_weights = nr_inputs;
+                } else {
+                    var nr_weights = layers[i-1].nr_neurons;
+                }
+                for(var weight=0; weight<nr_weights; weight++){
+                    weight_dna.push(-layers[i].max_weight);
+                }
+                // Create mu_s
+                var mu_dna = -layers[i].max_mu;
+                // Create sigma_s
+                var sigma_dna = -layers[i].max_sigma;
+                var neuron_dna = { weights: weight_dna,
+                                   mu_s: mu_dna,
+                                   sigma_s: sigma_dna };
+                neuronlayer_dna.push(neuron_dna);
+            }
+            if(layers[i].feedbacks){
+                var mud_dna = [];
+                var sigmad_dna = [];
+                for(var j=0; j<layers[i].nr_neurons; j++){
+                    mud_dna.push(-layers[i].max_mu);
+                    sigmad_dna.push(-layers[i].max_sigma);
+                }
+                var feedback_dna = {
+                    mu_d_weights: mud_dna,
+                    sigma_d_weights: sigmad_dna
+                };
+            } else {
+                var feedback_dna = undefined
+            }
+            brain_dna.push({
+                neurons: neuronlayer_dna,
+                feedback_weights: feedback_dna });
+        }
+        this.dna.layers = brain_dna;
+    }
 
     // Compute offspring of two genomes p_1 and p_2. This is done by first
     // calculating four different crossover genomes from the two original
